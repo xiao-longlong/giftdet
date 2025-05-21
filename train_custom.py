@@ -1,7 +1,7 @@
 # train_custom.py
 from ultralytics import YOLO
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     model = YOLO("yolo11n.yaml").load("yolo11n.pt")
 
     result = model.train(
@@ -12,7 +12,6 @@ if __name__ == '__main__':
         device=0,
         name="521_saved",
         project="runs/train",
-
         mosaic=0.0,
         mixup=0.0,
         copy_paste=0.0,
@@ -26,5 +25,5 @@ if __name__ == '__main__':
         scale=0.0,
         shear=0.0,
         perspective=0.0,
-        auto_augment='',  # 禁用自动增强策略
+        auto_augment="",  # 禁用自动增强策略
     )

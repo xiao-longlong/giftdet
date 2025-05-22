@@ -4,6 +4,7 @@ import numpy as np
 from ultralytics import YOLO
 from collections import defaultdict
 import matplotlib.pyplot as plt
+from matplotlib import colors as mcolors
 
 # === IOU计算函数 ===
 def iou(box1, box2):
@@ -29,7 +30,7 @@ def visualize_and_save(model, image_dir, save_dir):
 
     for image_file in image_files:
         image_path = os.path.join(image_dir, image_file)
-        results = model.predict(source=image_path, conf=0.25, verbose=False)
+        results = model.predict(source=image_path, conf=0.1, verbose=False)
         for r in results:
             annotated_img = r.plot()
             save_path = os.path.join(save_dir, image_file)
@@ -124,22 +125,58 @@ def evaluate_and_save_stats(model, image_dir, label_dir, save_dir):
 # === 3. 绘图统计 ===
 def plot_class_statistics(stats, save_dir):
     def plot(key, title, filename, color):
-        from matplotlib import colors as mcolors
         classes = sorted(stats.keys())
         totals = [stats[c]["total"] for c in classes]
         values = [stats[c][key] for c in classes]
+        num_classes = len(classes)
+        x = np.arange(num_classes)
 
         base_color = mcolors.to_rgba(color, alpha=0.3)
         main_color = mcolors.to_rgba(color, alpha=1.0)
 
-        plt.figure(figsize=(12, 6))
-        plt.bar(classes, totals, color=base_color, label="Total")
-        plt.bar(classes, values, color=main_color, label=key.capitalize())
-        plt.xlabel("Class ID")
+        plt.figure(figsize=(14, 6))
+        plt.bar(x, totals, color=base_color, label="Total")
+        bars = plt.bar(x, values, color=main_color, label=key.capitalize())
+
+        for i, bar in enumerate(bars):
+            total = totals[i]
+            value = values[i]
+            if total > 0:
+                ratio = value / total
+                height = total + 0.5
+                plt.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    height,
+                    f"{ratio:.0%}",
+                    ha="center",
+                    va="bottom",
+                    fontsize=8,
+                    color="black",
+                    rotation='vertical'
+                )
+
+        tick_interval = max(1, num_classes // 20)
+        tick_positions = x[::tick_interval]
+        tick_labels = [str(classes[i]) for i in tick_positions]
+        plt.xticks(tick_positions, tick_labels, rotation=45)
+
+        # 设置横坐标标题，附加总体比率
+        total_sum = sum(totals)
+        value_sum = sum(values)
+        if total_sum > 0:
+            overall_ratio = value_sum / total_sum
+            xlabel_text = f"Class ID (Overall {key.capitalize()} Rate: {overall_ratio:.2%})"
+        else:
+            xlabel_text = "Class ID"
+        plt.xlabel(xlabel_text)
+
         plt.ylabel("Count")
         plt.title(title)
         plt.legend()
         plt.grid(True, linestyle="--", alpha=0.3)
+
+        os.makedirs(os.path.join(save_dir, "data"), exist_ok=True)
+        plt.tight_layout()
         plt.savefig(os.path.join(save_dir, "data", filename))
         plt.close()
 
@@ -148,6 +185,7 @@ def plot_class_statistics(stats, save_dir):
     plot("missed", "Missed Detections per Class", "missed.png", "red")
     plot("false", "False Detections per Class", "false.png", "blue")
 
+
 # === 主执行函数 ===
 def run_inference_and_evaluation(model_path, image_dir, label_dir, save_dir):
     model = YOLO(model_path)
@@ -155,12 +193,13 @@ def run_inference_and_evaluation(model_path, image_dir, label_dir, save_dir):
     stats = evaluate_and_save_stats(model, image_dir, label_dir, save_dir)
     plot_class_statistics(stats, save_dir)
 
+
 # === 主函数入口 ===
 if __name__ == "__main__":
     # 修改此处路径以适配你的目录结构
-    model_path = "/home/wxl/kuaishou/GiftDetect/ultralytics/runs/train/521_saved_train/weights/best.pt"
-    image_dir = "/home/wxl/kuaishou/GiftDetect/dataset/giftyolo/val/images"
-    label_dir = "/home/wxl/kuaishou/GiftDetect/dataset/giftyolo/val/labels"
-    save_dir = "/home/wxl/kuaishou/GiftDetect/ultralytics/vis/val"
+    model_path = "/home/wxl/kuaishou/GiftDetect/ultralytics/runs/train/522_saved/weights/best.pt"
+    image_dir = "/home/wxl/kuaishou/GiftDetect/ultralytics/datasets/giftyoloblurtest/images"
+    label_dir = "/home/wxl/kuaishou/GiftDetect/ultralytics/datasets/giftyoloblurtest/labels"
+    save_dir = "/home/wxl/kuaishou/GiftDetect/ultralytics/vis/522_saved/giftyoloblurtest"
 
     run_inference_and_evaluation(model_path, image_dir, label_dir, save_dir)

@@ -1,5 +1,5 @@
-train: /home/wxl/kuaishou/GiftDetect/ultralytics/datasets/giftyolo/train/images
-val: /home/wxl/kuaishou/GiftDetect/ultralytics/datasets/giftyolo/val/images
+train: /home/wxl/kuaishou/GiftDetect/ultralytics/datasets/giftyolotbp/train
+val: /home/wxl/kuaishou/GiftDetect/ultralytics/datasets/giftyolotbp/val
 nc: 145  # 类别数
 names:
   [

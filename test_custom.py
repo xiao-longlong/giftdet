@@ -1,5 +1,7 @@
 import os
+
 import cv2
+
 from ultralytics import YOLO
 
 # 加载训练好的模型
@@ -12,7 +14,7 @@ save_dir = "/home/wxl/kuaishou/GiftDetect/ultralytics/runs/train/exp_custom2/inf
 os.makedirs(save_dir, exist_ok=True)
 
 # 获取所有图片路径
-image_files = [f for f in os.listdir(source_dir) if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
+image_files = [f for f in os.listdir(source_dir) if f.lower().endswith((".jpg", ".png", ".jpeg"))]
 
 # 遍历图像进行推理并保存结果
 for image_file in image_files:

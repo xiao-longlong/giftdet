@@ -9,11 +9,10 @@ from ultralytics.solutions.solutions import BaseSolution, SolutionResults  # Imp
 
 
 class Analytics(BaseSolution):
-    """
-    A class for creating and updating various types of charts for visual analytics.
+    """A class for creating and updating various types of charts for visual analytics.
 
-    This class extends BaseSolution to provide functionality for generating line, bar, pie, and area charts
-    based on object detection and tracking data.
+    This class extends BaseSolution to provide functionality for generating line, bar, pie, and area charts based on
+    object detection and tracking data.
 
     Attributes:
         type (str): The type of analytics chart to generate ('line', 'bar', 'pie', or 'area').
@@ -87,8 +86,7 @@ class Analytics(BaseSolution):
                 self.ax.axis("equal")
 
     def process(self, im0, frame_number):
-        """
-        Process image data and run object tracking to update analytics charts.
+        """Process image data and run object tracking to update analytics charts.
 
         Args:
             im0 (np.ndarray): Input image for processing.
@@ -127,8 +125,7 @@ class Analytics(BaseSolution):
         return SolutionResults(plot_im=plot_im, total_tracks=len(self.track_ids), classwise_count=self.clswise_count)
 
     def update_graph(self, frame_number, count_dict=None, plot="line"):
-        """
-        Update the graph with new data for single or multiple classes.
+        """Update the graph with new data for single or multiple classes.
 
         Args:
             frame_number (int): The current frame number.

@@ -1,4 +1,5 @@
 # Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
+from __future__ import annotations
 
 import glob
 import math
@@ -7,7 +8,6 @@ import random
 from copy import deepcopy
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
-from typing import Optional
 
 import cv2
 import numpy as np
@@ -19,11 +19,10 @@ from ultralytics.utils.patches import imread
 
 
 class BaseDataset(Dataset):
-    """
-    Base dataset class for loading and processing image data.
+    """Base dataset class for loading and processing image data.
 
-    This class provides core functionality for loading images, caching, and preparing data for training and inference
-    in object detection tasks.
+    This class provides core functionality for loading images, caching, and preparing data for training and inference in
+    object detection tasks.
 
     Attributes:
         img_path (str): Path to the folder containing images.
@@ -81,8 +80,7 @@ class BaseDataset(Dataset):
         fraction=1.0,
         channels=3,
     ):
-        """
-        Initialize BaseDataset with given configuration and options.
+        """Initialize BaseDataset with given configuration and options.
 
         Args:
             img_path (str): Path to the folder containing images.
@@ -143,8 +141,7 @@ class BaseDataset(Dataset):
         self.transforms = self.build_transforms(hyp=hyp)
 
     def get_img_files(self, img_path):
-        """
-        Read image files from the specified path.
+        """Read image files from the specified path.
 
         Args:
             img_path (str | List[str]): Path or list of paths to image directories or files.
@@ -180,9 +177,8 @@ class BaseDataset(Dataset):
         check_file_speeds(im_files, prefix=self.prefix)  # check image read speeds
         return im_files
 
-    def update_labels(self, include_class: Optional[list]):
-        """
-        Update labels to include only specified classes.
+    def update_labels(self, include_class: list | None):
+        """Update labels to include only specified classes.
 
         Args:
             include_class (list, optional): List of classes to include. If None, all classes are included.
@@ -205,8 +201,7 @@ class BaseDataset(Dataset):
                 self.labels[i]["cls"][:, 0] = 0
 
     def load_image(self, i, rect_mode=True):
-        """
-        Load an image from dataset index 'i'.
+        """Load an image from dataset index 'i'.
 
         Args:
             i (int): Index of the image to load.
@@ -281,8 +276,7 @@ class BaseDataset(Dataset):
             np.save(f.as_posix(), imread(self.im_files[i]), allow_pickle=False)
 
     def check_cache_disk(self, safety_margin=0.5):
-        """
-        Check if there's enough disk space for caching images.
+        """Check if there's enough disk space for caching images.
 
         Args:
             safety_margin (float, optional): Safety margin factor for disk space calculation.
@@ -305,7 +299,7 @@ class BaseDataset(Dataset):
                 LOGGER.warning(f"{self.prefix}Skipping caching images to disk, directory not writeable")
                 return False
         disk_required = b * self.ni / n * (1 + safety_margin)  # bytes required to cache dataset to disk
-        total, used, free = shutil.disk_usage(Path(self.im_files[0]).parent)
+        total, _used, free = shutil.disk_usage(Path(self.im_files[0]).parent)
         if disk_required > free:
             self.cache = None
             LOGGER.warning(
@@ -317,8 +311,7 @@ class BaseDataset(Dataset):
         return True
 
     def check_cache_ram(self, safety_margin=0.5):
-        """
-        Check if there's enough RAM for caching images.
+        """Check if there's enough RAM for caching images.
 
         Args:
             safety_margin (float, optional): Safety margin factor for RAM calculation.
@@ -376,8 +369,7 @@ class BaseDataset(Dataset):
         return self.transforms(self.get_image_and_label(index))
 
     def get_image_and_label(self, index):
-        """
-        Get and return label information from the dataset.
+        """Get and return label information from the dataset.
 
         Args:
             index (int): Index of the image to retrieve.
@@ -405,8 +397,7 @@ class BaseDataset(Dataset):
         return label
 
     def build_transforms(self, hyp=None):
-        """
-        Users can customize augmentations here.
+        """Users can customize augmentations here.
 
         Examples:
             >>> if self.augment:
@@ -419,8 +410,7 @@ class BaseDataset(Dataset):
         raise NotImplementedError
 
     def get_labels(self):
-        """
-        Users can customize their own format here.
+        """Users can customize their own format here.
 
         Examples:
             Ensure output is a dictionary with the following keys:

@@ -1,9 +1,10 @@
 # Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
+from __future__ import annotations
+
 import argparse
 import time
 from collections import defaultdict
-from typing import List, Optional, Tuple
 from urllib.parse import urlparse
 
 import cv2
@@ -66,8 +67,7 @@ class TorchVisionVideoClassifier:
     }
 
     def __init__(self, model_name: str, device: str | torch.device = ""):
-        """
-        Initialize the VideoClassifier with the specified model name and device.
+        """Initialize the VideoClassifier with the specified model name and device.
 
         Args:
             model_name (str): The name of the model to use. Must be one of the available models.
@@ -83,18 +83,18 @@ class TorchVisionVideoClassifier:
         self.model = model(weights=self.weights).to(self.device).eval()
 
     @staticmethod
-    def available_model_names() -> List[str]:
-        """
-        Get the list of available model names.
+    def available_model_names() -> list[str]:
+        """Get the list of available model names.
 
         Returns:
             (List[str]): List of available model names that can be used with this classifier.
         """
         return list(TorchVisionVideoClassifier.model_name_to_model_and_weights.keys())
 
-    def preprocess_crops_for_video_cls(self, crops: List[np.ndarray], input_size: List[int] = None) -> torch.Tensor:
-        """
-        Preprocess a list of crops for video classification.
+    def preprocess_crops_for_video_cls(
+        self, crops: list[np.ndarray], input_size: list[int] | None = None
+    ) -> torch.Tensor:
+        """Preprocess a list of crops for video classification.
 
         Args:
             crops (List[np.ndarray]): List of crops to preprocess. Each crop should have dimensions (H, W, C).
@@ -119,12 +119,11 @@ class TorchVisionVideoClassifier:
         return torch.stack(processed_crops).unsqueeze(0).permute(0, 2, 1, 3, 4).to(self.device)
 
     def __call__(self, sequences: torch.Tensor) -> torch.Tensor:
-        """
-        Perform inference on the given sequences.
+        """Perform inference on the given sequences.
 
         Args:
-            sequences (torch.Tensor): The input sequences for the model. Expected dimensions are
-                                     (B, T, C, H, W) for batched video frames or (T, C, H, W) for single video frames.
+            sequences (torch.Tensor): The input sequences for the model. Expected dimensions are (B, T, C, H, W) for
+                batched video frames or (T, C, H, W) for single video frames.
 
         Returns:
             (torch.Tensor): The model's output logits.
@@ -132,9 +131,8 @@ class TorchVisionVideoClassifier:
         with torch.inference_mode():
             return self.model(sequences)
 
-    def postprocess(self, outputs: torch.Tensor) -> Tuple[List[str], List[float]]:
-        """
-        Postprocess the model's batch output.
+    def postprocess(self, outputs: torch.Tensor) -> tuple[list[str], list[float]]:
+        """Postprocess the model's batch output.
 
         Args:
             outputs (torch.Tensor): The model's output logits.
@@ -156,8 +154,7 @@ class TorchVisionVideoClassifier:
 
 
 class HuggingFaceVideoClassifier:
-    """
-    Zero-shot video classifier using Hugging Face models for various devices.
+    """Zero-shot video classifier using Hugging Face models for various devices.
 
     This class provides an interface for zero-shot video classification using Hugging Face models.
 
@@ -184,13 +181,12 @@ class HuggingFaceVideoClassifier:
 
     def __init__(
         self,
-        labels: List[str],
+        labels: list[str],
         model_name: str = "microsoft/xclip-base-patch16-zero-shot",
         device: str | torch.device = "",
         fp16: bool = False,
     ):
-        """
-        Initialize the HuggingFaceVideoClassifier with the specified model name.
+        """Initialize the HuggingFaceVideoClassifier with the specified model name.
 
         Args:
             labels (List[str]): List of labels for zero-shot classification.
@@ -207,9 +203,10 @@ class HuggingFaceVideoClassifier:
             model = model.half()
         self.model = model.eval()
 
-    def preprocess_crops_for_video_cls(self, crops: List[np.ndarray], input_size: List[int] = None) -> torch.Tensor:
-        """
-        Preprocess a list of crops for video classification.
+    def preprocess_crops_for_video_cls(
+        self, crops: list[np.ndarray], input_size: list[int] | None = None
+    ) -> torch.Tensor:
+        """Preprocess a list of crops for video classification.
 
         Args:
             crops (List[np.ndarray]): List of crops to preprocess. Each crop should have dimensions (H, W, C).
@@ -239,11 +236,11 @@ class HuggingFaceVideoClassifier:
         return output
 
     def __call__(self, sequences: torch.Tensor) -> torch.Tensor:
-        """
-        Perform inference on the given sequences.
+        """Perform inference on the given sequences.
 
         Args:
-            sequences (torch.Tensor): The input sequences for the model. Batched video frames with shape (B, T, H, W, C).
+            sequences (torch.Tensor): The input sequences for the model. Batched video frames with shape (B, T, H, W,
+                C).
 
         Returns:
             (torch.Tensor): The model's output logits.
@@ -257,9 +254,8 @@ class HuggingFaceVideoClassifier:
 
         return outputs.logits_per_video
 
-    def postprocess(self, outputs: torch.Tensor) -> Tuple[List[List[str]], List[List[float]]]:
-        """
-        Postprocess the model's batch output.
+    def postprocess(self, outputs: torch.Tensor) -> tuple[list[list[str]], list[list[float]]]:
+        """Postprocess the model's batch output.
 
         Args:
             outputs (torch.Tensor): The model's output logits.
@@ -285,9 +281,8 @@ class HuggingFaceVideoClassifier:
         return pred_labels, pred_confs
 
 
-def crop_and_pad(frame: np.ndarray, box: List[float], margin_percent: int) -> np.ndarray:
-    """
-    Crop box with margin and take square crop from frame.
+def crop_and_pad(frame: np.ndarray, box: list[float], margin_percent: int) -> np.ndarray:
+    """Crop box with margin and take square crop from frame.
 
     Args:
         frame (np.ndarray): The input frame to crop from.
@@ -321,22 +316,21 @@ def run(
     weights: str = "yolo11n.pt",
     device: str = "",
     source: str = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    output_path: Optional[str] = None,
+    output_path: str | None = None,
     crop_margin_percentage: int = 10,
     num_video_sequence_samples: int = 8,
     skip_frame: int = 2,
     video_cls_overlap_ratio: float = 0.25,
     fp16: bool = False,
     video_classifier_model: str = "microsoft/xclip-base-patch32",
-    labels: List[str] = None,
+    labels: list[str] | None = None,
 ) -> None:
-    """
-    Run action recognition on a video source using YOLO for object detection and a video classifier.
+    """Run action recognition on a video source using YOLO for object detection and a video classifier.
 
     Args:
         weights (str): Path to the YOLO model weights.
-        device (str): Device to run the model on. Use 'cuda' for NVIDIA GPU, 'mps' for Apple Silicon, or 'cpu'.
-            Defaults to auto-detection.
+        device (str): Device to run the model on. Use 'cuda' for NVIDIA GPU, 'mps' for Apple Silicon, or 'cpu'. Defaults
+            to auto-detection.
         source (str): Path to mp4 video file or YouTube URL. Defaults to a sample YouTube video.
         output_path (Optional[str]): Path to save the output video.
         crop_margin_percentage (int): Percentage of margin to add around detected objects.
@@ -472,8 +466,7 @@ def run(
 
 
 def parse_opt() -> argparse.Namespace:
-    """
-    Parse command line arguments.
+    """Parse command line arguments.
 
     Returns:
         (argparse.Namespace): Parsed command line arguments.
@@ -513,8 +506,7 @@ def parse_opt() -> argparse.Namespace:
 
 
 def main(opt: argparse.Namespace) -> None:
-    """
-    Main function to run the action recognition pipeline.
+    """Main function to run the action recognition pipeline.
 
     Args:
         opt (argparse.Namespace): Command line arguments.

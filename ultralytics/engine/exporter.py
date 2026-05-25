@@ -148,8 +148,7 @@ def export_formats():
 
 
 def validate_args(format, passed_args, valid_args):
-    """
-    Validate arguments based on the export format.
+    """Validate arguments based on the export format.
 
     Args:
         format (str): The export format.
@@ -201,8 +200,7 @@ def try_export(inner_func):
 
 @contextmanager
 def arange_patch(args):
-    """
-    Workaround for ONNX torch.arange incompatibility with FP16.
+    """Workaround for ONNX torch.arange incompatibility with FP16.
 
     https://github.com/pytorch/pytorch/issues/148041.
     """
@@ -221,8 +219,7 @@ def arange_patch(args):
 
 
 class Exporter:
-    """
-    A class for exporting a model.
+    """A class for exporting a model.
 
     Attributes:
         args (SimpleNamespace): Configuration for the exporter.
@@ -230,8 +227,7 @@ class Exporter:
     """
 
     def __init__(self, cfg=DEFAULT_CFG, overrides=None, _callbacks=None):
-        """
-        Initialize the Exporter class.
+        """Initialize the Exporter class.
 
         Args:
             cfg (str, optional): Path to a configuration file.
@@ -558,7 +554,7 @@ class Exporter:
         if self.args.simplify:
             requirements += ["onnxslim>=0.1.53", "onnxruntime" + ("-gpu" if torch.cuda.is_available() else "")]
         check_requirements(requirements)
-        import onnx  # noqa
+        import onnx
 
         opset_version = self.args.opset or get_latest_opset()
         LOGGER.info(f"\n{prefix} starting export with onnx {onnx.__version__} opset {opset_version}...")
@@ -692,8 +688,8 @@ class Exporter:
         """YOLO Paddle export."""
         assert not IS_JETSON, "Jetson Paddle exports not supported yet"
         check_requirements(("paddlepaddle-gpu" if torch.cuda.is_available() else "paddlepaddle>=3.0.0", "x2paddle"))
-        import x2paddle  # noqa
-        from x2paddle.convert import pytorch2paddle  # noqa
+        import x2paddle
+        from x2paddle.convert import pytorch2paddle
 
         LOGGER.info(f"\n{prefix} starting export with X2Paddle {x2paddle.__version__}...")
         f = str(self.file).replace(self.file.suffix, f"_paddle_model{os.sep}")
@@ -708,7 +704,7 @@ class Exporter:
         f_onnx, _ = self.export_onnx()  # get onnx model first
 
         check_requirements("MNN>=2.9.6")
-        import MNN  # noqa
+        import MNN
         from MNN.tools import mnnconvert
 
         # Setup and checks
@@ -731,7 +727,7 @@ class Exporter:
     def export_ncnn(self, prefix=colorstr("NCNN:")):
         """YOLO NCNN export using PNNX https://github.com/pnnx/pnnx."""
         check_requirements("ncnn")
-        import ncnn  # noqa
+        import ncnn
 
         LOGGER.info(f"\n{prefix} starting export with NCNN {ncnn.__version__}...")
         f = Path(str(self.file).replace(self.file.suffix, f"_ncnn_model{os.sep}"))
@@ -748,7 +744,7 @@ class Exporter:
             system = "macos" if MACOS else "windows" if WINDOWS else "linux-aarch64" if ARM64 else "linux"
             try:
                 release, assets = get_github_assets(repo="pnnx/pnnx")
-                asset = [x for x in assets if f"{system}.zip" in x][0]
+                asset = next(x for x in assets if f"{system}.zip" in x)
                 assert isinstance(asset, str), "Unable to retrieve PNNX repo assets"  # i.e. pnnx-20240410-macos.zip
                 LOGGER.info(f"{prefix} successfully found latest PNNX asset file {asset}")
             except Exception as e:
@@ -800,7 +796,7 @@ class Exporter:
         """YOLO CoreML export."""
         mlmodel = self.args.format.lower() == "mlmodel"  # legacy *.mlmodel export format requested
         check_requirements("coremltools>=8.0")
-        import coremltools as ct  # noqa
+        import coremltools as ct
 
         LOGGER.info(f"\n{prefix} starting export with coremltools {ct.__version__}...")
         assert not WINDOWS, "CoreML export is not supported on Windows, please run on macOS or Linux."
@@ -881,11 +877,11 @@ class Exporter:
         f_onnx, _ = self.export_onnx()  # run before TRT import https://github.com/ultralytics/ultralytics/issues/7016
 
         try:
-            import tensorrt as trt  # noqa
+            import tensorrt as trt
         except ImportError:
             if LINUX:
                 check_requirements("tensorrt>7.0.0,!=10.1.0")
-            import tensorrt as trt  # noqa
+            import tensorrt as trt
         check_version(trt.__version__, ">=7.0.0", hard=True)
         check_version(trt.__version__, "!=10.1.0", msg="https://github.com/ultralytics/ultralytics/pull/14239")
 
@@ -915,10 +911,10 @@ class Exporter:
         """YOLO TensorFlow SavedModel export."""
         cuda = torch.cuda.is_available()
         try:
-            import tensorflow as tf  # noqa
+            import tensorflow as tf
         except ImportError:
             check_requirements("tensorflow>=2.0.0")
-            import tensorflow as tf  # noqa
+            import tensorflow as tf
         check_requirements(
             (
                 "tf_keras",  # required by 'onnx2tf' package
@@ -1003,8 +999,8 @@ class Exporter:
     @try_export
     def export_pb(self, keras_model, prefix=colorstr("TensorFlow GraphDef:")):
         """YOLO TensorFlow GraphDef *.pb export https://github.com/leimao/Frozen-Graph-TensorFlow."""
-        import tensorflow as tf  # noqa
-        from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2  # noqa
+        import tensorflow as tf
+        from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 
         LOGGER.info(f"\n{prefix} starting export with tensorflow {tf.__version__}...")
         f = self.file.with_suffix(".pb")
@@ -1020,7 +1016,7 @@ class Exporter:
     def export_tflite(self, prefix=colorstr("TensorFlow Lite:")):
         """YOLO TensorFlow Lite export."""
         # BUG https://github.com/ultralytics/ultralytics/issues/13436
-        import tensorflow as tf  # noqa
+        import tensorflow as tf
 
         LOGGER.info(f"\n{prefix} starting export with tensorflow {tf.__version__}...")
         saved_model = Path(str(self.file).replace(self.file.suffix, "_saved_model"))
@@ -1072,7 +1068,7 @@ class Exporter:
         """YOLO TensorFlow.js export."""
         check_requirements("tensorflowjs")
         import tensorflow as tf
-        import tensorflowjs as tfjs  # noqa
+        import tensorflowjs as tfjs
 
         LOGGER.info(f"\n{prefix} starting export with tensorflowjs {tfjs.__version__}...")
         f = str(self.file).replace(self.file.suffix, "_web_model")  # js dir
@@ -1219,8 +1215,7 @@ class Exporter:
                 iou_threshold: float = 0.7,
                 max_detections: int = 300,
             ):
-                """
-                Wrapping PyTorch Module with multiclass_nms layer from sony_custom_layers.
+                """Wrapping PyTorch Module with multiclass_nms layer from sony_custom_layers.
 
                 Args:
                     model (nn.Module): Model instance.
@@ -1290,7 +1285,7 @@ class Exporter:
 
     def _pipeline_coreml(self, model, weights_dir=None, prefix=colorstr("CoreML Pipeline:")):
         """YOLO CoreML pipeline."""
-        import coremltools as ct  # noqa
+        import coremltools as ct
 
         LOGGER.info(f"{prefix} starting pipeline with coremltools {ct.__version__}...")
         _, _, h, w = list(self.im.shape)  # BCHW
@@ -1428,8 +1423,7 @@ class NMSModel(torch.nn.Module):
     """Model wrapper with embedded NMS for Detect, Segment, Pose and OBB."""
 
     def __init__(self, model, args):
-        """
-        Initialize the NMSModel.
+        """Initialize the NMSModel.
 
         Args:
             model (torch.nn.module): The model to wrap with NMS postprocessing.
@@ -1442,14 +1436,14 @@ class NMSModel(torch.nn.Module):
         self.is_tf = self.args.format in frozenset({"saved_model", "tflite", "tfjs"})
 
     def forward(self, x):
-        """
-        Performs inference with NMS post-processing. Supports Detect, Segment, OBB and Pose.
+        """Performs inference with NMS post-processing. Supports Detect, Segment, OBB and Pose.
 
         Args:
             x (torch.Tensor): The preprocessed tensor with shape (N, 3, H, W).
 
         Returns:
-            (torch.Tensor): List of detections, each an (N, max_det, 4 + 2 + extra_shape) Tensor where N is the number of detections after NMS.
+            (torch.Tensor): List of detections, each an (N, max_det, 4 + 2 + extra_shape) Tensor where N is the number
+                of detections after NMS.
         """
         from functools import partial
 

@@ -14,8 +14,7 @@ from ultralytics.utils.torch_utils import is_parallel, strip_optimizer, torch_di
 
 
 class ClassificationTrainer(BaseTrainer):
-    """
-    A class extending the BaseTrainer class for training based on a classification model.
+    """A class extending the BaseTrainer class for training based on a classification model.
 
     This trainer handles the training process for image classification tasks, supporting both YOLO classification models
     and torchvision models.
@@ -35,7 +34,7 @@ class ClassificationTrainer(BaseTrainer):
         preprocess_batch: Preprocess a batch of images and classes.
         progress_string: Return a formatted string showing training progress.
         get_validator: Return an instance of ClassificationValidator.
-        label_loss_items: Return a loss dict with labelled training loss items.
+        label_loss_items: Return a loss dict with labeled training loss items.
         plot_metrics: Plot metrics from a CSV file.
         final_eval: Evaluate trained model and save validation results.
         plot_training_samples: Plot training samples with their annotations.
@@ -48,8 +47,7 @@ class ClassificationTrainer(BaseTrainer):
     """
 
     def __init__(self, cfg=DEFAULT_CFG, overrides=None, _callbacks=None):
-        """
-        Initialize a ClassificationTrainer object.
+        """Initialize a ClassificationTrainer object.
 
         This constructor sets up a trainer for image classification tasks, configuring the task type and default
         image size if not specified.
@@ -77,8 +75,7 @@ class ClassificationTrainer(BaseTrainer):
         self.model.names = self.data["names"]
 
     def get_model(self, cfg=None, weights=None, verbose=True):
-        """
-        Return a modified PyTorch model configured for training YOLO.
+        """Return a modified PyTorch model configured for training YOLO.
 
         Args:
             cfg (Any): Model configuration.
@@ -102,8 +99,7 @@ class ClassificationTrainer(BaseTrainer):
         return model
 
     def setup_model(self):
-        """
-        Load, create or download model for classification tasks.
+        """Load, create or download model for classification tasks.
 
         Returns:
             (Any): Model checkpoint if applicable, otherwise None.
@@ -121,8 +117,7 @@ class ClassificationTrainer(BaseTrainer):
         return ckpt
 
     def build_dataset(self, img_path, mode="train", batch=None):
-        """
-        Create a ClassificationDataset instance given an image path and mode.
+        """Create a ClassificationDataset instance given an image path and mode.
 
         Args:
             img_path (str): Path to the dataset images.
@@ -135,8 +130,7 @@ class ClassificationTrainer(BaseTrainer):
         return ClassificationDataset(root=img_path, args=self.args, augment=mode == "train", prefix=mode)
 
     def get_dataloader(self, dataset_path, batch_size=16, rank=0, mode="train"):
-        """
-        Return PyTorch DataLoader with transforms to preprocess images.
+        """Return PyTorch DataLoader with transforms to preprocess images.
 
         Args:
             dataset_path (str): Path to the dataset.
@@ -183,8 +177,7 @@ class ClassificationTrainer(BaseTrainer):
         )
 
     def label_loss_items(self, loss_items=None, prefix="train"):
-        """
-        Return a loss dict with labelled training loss items tensor.
+        """Return a loss dict with labeled training loss items tensor.
 
         Args:
             loss_items (torch.Tensor, optional): Loss tensor items.
@@ -217,8 +210,7 @@ class ClassificationTrainer(BaseTrainer):
                     self.run_callbacks("on_fit_epoch_end")
 
     def plot_training_samples(self, batch, ni):
-        """
-        Plot training samples with their annotations.
+        """Plot training samples with their annotations.
 
         Args:
             batch (Dict[str, torch.Tensor]): Batch containing images and class labels.

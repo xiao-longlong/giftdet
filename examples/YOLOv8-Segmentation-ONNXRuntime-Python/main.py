@@ -14,12 +14,11 @@ from ultralytics.utils.checks import check_yaml
 
 
 class YOLOv8Seg:
-    """
-    YOLOv8 segmentation model for performing instance segmentation using ONNX Runtime.
+    """YOLOv8 segmentation model for performing instance segmentation using ONNX Runtime.
 
     This class implements a YOLOv8 instance segmentation model using ONNX Runtime for inference. It handles
-    preprocessing of input images, running inference with the ONNX model, and postprocessing the results to
-    generate bounding boxes and segmentation masks.
+    preprocessing of input images, running inference with the ONNX model, and postprocessing the results to generate
+    bounding boxes and segmentation masks.
 
     Attributes:
         session (ort.InferenceSession): ONNX Runtime inference session for model execution.
@@ -36,8 +35,7 @@ class YOLOv8Seg:
     """
 
     def __init__(self, onnx_model, conf=0.25, iou=0.7, imgsz=640):
-        """
-        Initialize the instance segmentation model using an ONNX model.
+        """Initialize the instance segmentation model using an ONNX model.
 
         Args:
             onnx_model (str): Path to the ONNX model file.
@@ -59,8 +57,7 @@ class YOLOv8Seg:
         self.iou = iou
 
     def __call__(self, img):
-        """
-        Run inference on the input image using the ONNX model.
+        """Run inference on the input image using the ONNX model.
 
         Args:
             img (np.ndarray): The original input image in BGR format.
@@ -74,8 +71,7 @@ class YOLOv8Seg:
         return self.postprocess(img, prep_img, outs)
 
     def letterbox(self, img, new_shape=(640, 640)):
-        """
-        Resize and pad image while maintaining aspect ratio.
+        """Resize and pad image while maintaining aspect ratio.
 
         Args:
             img (np.ndarray): Input image in BGR format.
@@ -90,20 +86,19 @@ class YOLOv8Seg:
         r = min(new_shape[0] / shape[0], new_shape[1] / shape[1])
 
         # Compute padding
-        new_unpad = int(round(shape[1] * r)), int(round(shape[0] * r))
+        new_unpad = round(shape[1] * r), round(shape[0] * r)
         dw, dh = (new_shape[1] - new_unpad[0]) / 2, (new_shape[0] - new_unpad[1]) / 2  # wh padding
 
         if shape[::-1] != new_unpad:  # resize
             img = cv2.resize(img, new_unpad, interpolation=cv2.INTER_LINEAR)
-        top, bottom = int(round(dh - 0.1)), int(round(dh + 0.1))
-        left, right = int(round(dw - 0.1)), int(round(dw + 0.1))
+        top, bottom = round(dh - 0.1), round(dh + 0.1)
+        left, right = round(dw - 0.1), round(dw + 0.1)
         img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=(114, 114, 114))
 
         return img
 
     def preprocess(self, img, new_shape):
-        """
-        Preprocess the input image before feeding it into the model.
+        """Preprocess the input image before feeding it into the model.
 
         Args:
             img (np.ndarray): The input image in BGR format.
@@ -119,8 +114,7 @@ class YOLOv8Seg:
         return img
 
     def postprocess(self, img, prep_img, outs):
-        """
-        Post-process model predictions to extract meaningful results.
+        """Post-process model predictions to extract meaningful results.
 
         Args:
             img (np.ndarray): The original input image.
@@ -142,12 +136,12 @@ class YOLOv8Seg:
         return results
 
     def process_mask(self, protos, masks_in, bboxes, shape):
-        """
-        Process prototype masks with predicted mask coefficients to generate instance segmentation masks.
+        """Process prototype masks with predicted mask coefficients to generate instance segmentation masks.
 
         Args:
             protos (torch.Tensor): Prototype masks with shape (mask_dim, mask_h, mask_w).
-            masks_in (torch.Tensor): Predicted mask coefficients with shape (n, mask_dim), where n is number of detections.
+            masks_in (torch.Tensor): Predicted mask coefficients with shape (n, mask_dim), where n is number of
+                detections.
             bboxes (torch.Tensor): Bounding boxes with shape (n, 4), where n is number of detections.
             shape (Tuple[int, int]): The size of the input image as (height, width).
 

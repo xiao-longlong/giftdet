@@ -28,8 +28,7 @@ from ultralytics.utils.plotting import plot_tune_results
 
 
 class Tuner:
-    """
-    A class for hyperparameter tuning of YOLO models.
+    """A class for hyperparameter tuning of YOLO models.
 
     The class evolves YOLO model hyperparameters over a given number of iterations by mutating them according to the
     search space and retraining the model to evaluate their performance.
@@ -59,8 +58,7 @@ class Tuner:
     """
 
     def __init__(self, args=DEFAULT_CFG, _callbacks=None):
-        """
-        Initialize the Tuner with configurations.
+        """Initialize the Tuner with configurations.
 
         Args:
             args (dict): Configuration for hyperparameter evolution.
@@ -107,8 +105,7 @@ class Tuner:
         )
 
     def _mutate(self, parent="single", n=5, mutation=0.8, sigma=0.2):
-        """
-        Mutate hyperparameters based on bounds and scaling factors specified in `self.space`.
+        """Mutate hyperparameters based on bounds and scaling factors specified in `self.space`.
 
         Args:
             parent (str): Parent selection method: 'single' or 'weighted'.
@@ -153,8 +150,7 @@ class Tuner:
         return hyp
 
     def __call__(self, model=None, iterations=10, cleanup=True):
-        """
-        Execute the hyperparameter evolution process when the Tuner instance is called.
+        """Execute the hyperparameter evolution process when the Tuner instance is called.
 
         This method iterates through the number of iterations, performing the following steps in each iteration:
 
@@ -168,7 +164,7 @@ class Tuner:
             iterations (int): The number of generations to run the evolution for.
             cleanup (bool): Whether to delete iteration weights to reduce storage space used during tuning.
 
-        Note:
+        Notes:
             The method utilizes the `self.tune_csv` Path object to read and log hyperparameters and fitness scores.
             Ensure this path is set correctly in the Tuner instance.
         """
@@ -204,7 +200,7 @@ class Tuner:
             # Save results and mutated_hyp to CSV
             fitness = metrics.get("fitness", 0.0)
             log_row = [round(fitness, 5)] + [mutated_hyp[k] for k in self.space.keys()]
-            headers = "" if self.tune_csv.exists() else (",".join(["fitness"] + list(self.space.keys())) + "\n")
+            headers = "" if self.tune_csv.exists() else (",".join(["fitness", *list(self.space.keys())]) + "\n")
             with open(self.tune_csv, "a", encoding="utf-8") as f:
                 f.write(headers + ",".join(map(str, log_row)) + "\n")
 

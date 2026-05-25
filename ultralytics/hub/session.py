@@ -18,8 +18,8 @@ AGENT_NAME = f"python-{__version__}-colab" if IS_COLAB else f"python-{__version_
 
 
 class HUBTrainingSession:
-    """
-    HUB training session for Ultralytics HUB YOLO models. Handles model initialization, heartbeats, and checkpointing.
+    """HUB training session for Ultralytics HUB YOLO models. Handles model initialization, heartbeats, and
+    checkpointing.
 
     This class encapsulates the functionality for interacting with Ultralytics HUB during model training, including
     model creation, metrics tracking, and checkpoint uploading.
@@ -43,12 +43,11 @@ class HUBTrainingSession:
     """
 
     def __init__(self, identifier):
-        """
-        Initialize the HUBTrainingSession with the provided model identifier.
+        """Initialize the HUBTrainingSession with the provided model identifier.
 
         Args:
-            identifier (str): Model identifier used to initialize the HUB training session.
-                It can be a URL string or a model key with specific format.
+            identifier (str): Model identifier used to initialize the HUB training session. It can be a URL string or a
+                model key with specific format.
 
         Raises:
             ValueError: If the provided model identifier is invalid.
@@ -91,8 +90,7 @@ class HUBTrainingSession:
 
     @classmethod
     def create_session(cls, identifier, args=None):
-        """
-        Create an authenticated HUBTrainingSession or return None.
+        """Create an authenticated HUBTrainingSession or return None.
 
         Args:
             identifier (str): Model identifier used to initialize the HUB training session.
@@ -112,8 +110,7 @@ class HUBTrainingSession:
             return None
 
     def load_model(self, model_id):
-        """
-        Load an existing model from Ultralytics HUB using the provided model identifier.
+        """Load an existing model from Ultralytics HUB using the provided model identifier.
 
         Args:
             model_id (str): The identifier of the model to load.
@@ -138,8 +135,7 @@ class HUBTrainingSession:
         LOGGER.info(f"{PREFIX}View model at {self.model_url} 🚀")
 
     def create_model(self, model_args):
-        """
-        Initialize a HUB training session with the specified model arguments.
+        """Initialize a HUB training session with the specified model arguments.
 
         Args:
             model_args (dict): Arguments for creating the model, including batch size, epochs, image size, etc.
@@ -183,8 +179,7 @@ class HUBTrainingSession:
 
     @staticmethod
     def _parse_identifier(identifier):
-        """
-        Parse the given identifier to determine the type and extract relevant components.
+        """Parse the given identifier to determine the type and extract relevant components.
 
         The method supports different identifier formats:
             - A HUB model URL https://hub.ultralytics.com/models/MODEL
@@ -213,8 +208,7 @@ class HUBTrainingSession:
         return api_key, model_id, filename
 
     def _set_train_args(self):
-        """
-        Initialize training arguments and create a model entry on the Ultralytics HUB.
+        """Initialize training arguments and create a model entry on the Ultralytics HUB.
 
         This method sets up training arguments based on the model's state and updates them with any additional
         arguments provided. It handles different states of the model, such as whether it's resumable, pretrained,
@@ -256,8 +250,7 @@ class HUBTrainingSession:
         *args,
         **kwargs,
     ):
-        """
-        Attempt to execute `request_func` with retries, timeout handling, optional threading, and progress tracking.
+        """Attempt to execute `request_func` with retries, timeout handling, optional threading, and progress tracking.
 
         Args:
             request_func (callable): The function to execute.
@@ -328,8 +321,7 @@ class HUBTrainingSession:
 
     @staticmethod
     def _should_retry(status_code):
-        """
-        Determine if a request should be retried based on the HTTP status code.
+        """Determine if a request should be retried based on the HTTP status code.
 
         Args:
             status_code (int): The HTTP status code from the response.
@@ -345,8 +337,7 @@ class HUBTrainingSession:
         return status_code in retry_codes
 
     def _get_failure_message(self, response: requests.Response, retry: int, timeout: int):
-        """
-        Generate a retry message based on the response status code.
+        """Generate a retry message based on the response status code.
 
         Args:
             response (requests.Response): The HTTP response object.
@@ -382,8 +373,7 @@ class HUBTrainingSession:
         map: float = 0.0,
         final: bool = False,
     ) -> None:
-        """
-        Upload a model checkpoint to Ultralytics HUB.
+        """Upload a model checkpoint to Ultralytics HUB.
 
         Args:
             epoch (int): The current training epoch.
@@ -423,8 +413,7 @@ class HUBTrainingSession:
 
     @staticmethod
     def _show_upload_progress(content_length: int, response: requests.Response) -> None:
-        """
-        Display a progress bar to track the upload progress of a file download.
+        """Display a progress bar to track the upload progress of a file download.
 
         Args:
             content_length (int): The total size of the content to be downloaded in bytes.
@@ -436,8 +425,7 @@ class HUBTrainingSession:
 
     @staticmethod
     def _iterate_content(response: requests.Response) -> None:
-        """
-        Process the streamed HTTP response data.
+        """Process the streamed HTTP response data.
 
         Args:
             response (requests.Response): The response object from the file download request.

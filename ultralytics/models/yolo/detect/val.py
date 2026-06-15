@@ -15,8 +15,7 @@ from ultralytics.utils.plotting import output_to_target, plot_images
 
 
 class DetectionValidator(BaseValidator):
-    """
-    A class extending the BaseValidator class for validation based on a detection model.
+    """A class extending the BaseValidator class for validation based on a detection model.
 
     This class implements validation functionality specific to object detection tasks, including metrics calculation,
     prediction processing, and visualization of results.
@@ -42,8 +41,7 @@ class DetectionValidator(BaseValidator):
     """
 
     def __init__(self, dataloader=None, save_dir=None, pbar=None, args=None, _callbacks=None):
-        """
-        Initialize detection validator with necessary variables and settings.
+        """Initialize detection validator with necessary variables and settings.
 
         Args:
             dataloader (torch.utils.data.DataLoader, optional): Dataloader to use for validation.
@@ -64,8 +62,7 @@ class DetectionValidator(BaseValidator):
         self.niou = self.iouv.numel()
 
     def preprocess(self, batch):
-        """
-        Preprocess batch of images for YOLO validation.
+        """Preprocess batch of images for YOLO validation.
 
         Args:
             batch (dict): Batch containing images and annotations.
@@ -81,8 +78,7 @@ class DetectionValidator(BaseValidator):
         return batch
 
     def init_metrics(self, model):
-        """
-        Initialize evaluation metrics for YOLO detection validation.
+        """Initialize evaluation metrics for YOLO detection validation.
 
         Args:
             model (torch.nn.Module): Model to validate.
@@ -111,8 +107,7 @@ class DetectionValidator(BaseValidator):
         return ("%22s" + "%11s" * 6) % ("Class", "Images", "Instances", "Box(P", "R", "mAP50", "mAP50-95)")
 
     def postprocess(self, preds):
-        """
-        Apply Non-maximum suppression to prediction outputs.
+        """Apply Non-maximum suppression to prediction outputs.
 
         Args:
             preds (torch.Tensor): Raw predictions from the model.
@@ -133,8 +128,7 @@ class DetectionValidator(BaseValidator):
         )
 
     def _prepare_batch(self, si, batch):
-        """
-        Prepare a batch of images and annotations for validation.
+        """Prepare a batch of images and annotations for validation.
 
         Args:
             si (int): Batch index.
@@ -155,8 +149,7 @@ class DetectionValidator(BaseValidator):
         return {"cls": cls, "bbox": bbox, "ori_shape": ori_shape, "imgsz": imgsz, "ratio_pad": ratio_pad}
 
     def _prepare_pred(self, pred, pbatch):
-        """
-        Prepare predictions for evaluation against ground truth.
+        """Prepare predictions for evaluation against ground truth.
 
         Args:
             pred (torch.Tensor): Model predictions.
@@ -172,8 +165,7 @@ class DetectionValidator(BaseValidator):
         return predn
 
     def update_metrics(self, preds, batch):
-        """
-        Update metrics with new predictions and ground truth.
+        """Update metrics with new predictions and ground truth.
 
         Args:
             preds (List[torch.Tensor]): List of predictions from the model.
@@ -227,8 +219,7 @@ class DetectionValidator(BaseValidator):
                 )
 
     def finalize_metrics(self, *args, **kwargs):
-        """
-        Set final values for metrics speed and confusion matrix.
+        """Set final values for metrics speed and confusion matrix.
 
         Args:
             *args (Any): Variable length argument list.
@@ -238,8 +229,7 @@ class DetectionValidator(BaseValidator):
         self.metrics.confusion_matrix = self.confusion_matrix
 
     def get_stats(self):
-        """
-        Calculate and return metrics statistics.
+        """Calculate and return metrics statistics.
 
         Returns:
             (dict): Dictionary containing metrics results.
@@ -273,12 +263,11 @@ class DetectionValidator(BaseValidator):
                 )
 
     def _process_batch(self, detections, gt_bboxes, gt_cls):
-        """
-        Return correct prediction matrix.
+        """Return correct prediction matrix.
 
         Args:
-            detections (torch.Tensor): Tensor of shape (N, 6) representing detections where each detection is
-                (x1, y1, x2, y2, conf, class).
+            detections (torch.Tensor): Tensor of shape (N, 6) representing detections where each detection is (x1, y1,
+                x2, y2, conf, class).
             gt_bboxes (torch.Tensor): Tensor of shape (M, 4) representing ground-truth bounding box coordinates. Each
                 bounding box is of the format: (x1, y1, x2, y2).
             gt_cls (torch.Tensor): Tensor of shape (M,) representing target class indices.
@@ -290,8 +279,7 @@ class DetectionValidator(BaseValidator):
         return self.match_predictions(detections[:, 5], gt_cls, iou)
 
     def build_dataset(self, img_path, mode="val", batch=None):
-        """
-        Build YOLO Dataset.
+        """Build YOLO Dataset.
 
         Args:
             img_path (str): Path to the folder containing images.
@@ -304,8 +292,7 @@ class DetectionValidator(BaseValidator):
         return build_yolo_dataset(self.args, img_path, batch, self.data, mode=mode, stride=self.stride)
 
     def get_dataloader(self, dataset_path, batch_size):
-        """
-        Construct and return dataloader.
+        """Construct and return dataloader.
 
         Args:
             dataset_path (str): Path to the dataset.
@@ -318,8 +305,7 @@ class DetectionValidator(BaseValidator):
         return build_dataloader(dataset, batch_size, self.args.workers, shuffle=False, rank=-1)  # return dataloader
 
     def plot_val_samples(self, batch, ni):
-        """
-        Plot validation image samples.
+        """Plot validation image samples.
 
         Args:
             batch (dict): Batch containing images and annotations.
@@ -337,8 +323,7 @@ class DetectionValidator(BaseValidator):
         )
 
     def plot_predictions(self, batch, preds, ni):
-        """
-        Plot predicted bounding boxes on input images and save the result.
+        """Plot predicted bounding boxes on input images and save the result.
 
         Args:
             batch (dict): Batch containing images and annotations.
@@ -355,8 +340,7 @@ class DetectionValidator(BaseValidator):
         )  # pred
 
     def save_one_txt(self, predn, save_conf, shape, file):
-        """
-        Save YOLO detections to a txt file in normalized coordinates in a specific format.
+        """Save YOLO detections to a txt file in normalized coordinates in a specific format.
 
         Args:
             predn (torch.Tensor): Predictions in the format (x1, y1, x2, y2, conf, class).
@@ -374,8 +358,7 @@ class DetectionValidator(BaseValidator):
         ).save_txt(file, save_conf=save_conf)
 
     def pred_to_json(self, predn, filename):
-        """
-        Serialize YOLO predictions to COCO json format.
+        """Serialize YOLO predictions to COCO json format.
 
         Args:
             predn (torch.Tensor): Predictions in the format (x1, y1, x2, y2, conf, class).
@@ -396,8 +379,7 @@ class DetectionValidator(BaseValidator):
             )
 
     def eval_json(self, stats):
-        """
-        Evaluate YOLO output in JSON format and return performance statistics.
+        """Evaluate YOLO output in JSON format and return performance statistics.
 
         Args:
             stats (dict): Current statistics dictionary.
@@ -419,8 +401,8 @@ class DetectionValidator(BaseValidator):
                     assert x.is_file(), f"{x} file not found"
                 check_requirements("pycocotools>=2.0.6" if self.is_coco else "lvis>=0.5.3")
                 if self.is_coco:
-                    from pycocotools.coco import COCO  # noqa
-                    from pycocotools.cocoeval import COCOeval  # noqa
+                    from pycocotools.coco import COCO
+                    from pycocotools.cocoeval import COCOeval
 
                     anno = COCO(str(anno_json))  # init annotations api
                     pred = anno.loadRes(str(pred_json))  # init predictions api (must pass string, not Path)

@@ -1,6 +1,8 @@
 # Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
+import functools
 import json
+import operator
 import random
 import shutil
 from collections import defaultdict
@@ -17,8 +19,7 @@ from ultralytics.utils.files import increment_path
 
 
 def coco91_to_coco80_class():
-    """
-    Converts 91-index COCO class IDs to 80-index COCO class IDs.
+    """Converts 91-index COCO class IDs to 80-index COCO class IDs.
 
     Returns:
         (list): A list of 91 class IDs where the index represents the 80-index class ID and the value is the
@@ -120,9 +121,8 @@ def coco91_to_coco80_class():
 
 
 def coco80_to_coco91_class():
-    r"""
-    Converts 80-index (val2014) to 91-index (paper).
-    For details see https://tech.amikelive.com/node-718/what-object-categories-labels-are-in-coco-dataset/.
+    r"""Converts 80-index (val2014) to 91-index (paper). For details see
+    https://tech.amikelive.com/node-718/what-object-categories-labels-are-in-coco-dataset/.
 
     Examples:
         >>> import numpy as np
@@ -227,8 +227,7 @@ def convert_coco(
     cls91to80=True,
     lvis=False,
 ):
-    """
-    Converts COCO dataset annotations to a YOLO annotation format suitable for training YOLO models.
+    """Converts COCO dataset annotations to a YOLO annotation format suitable for training YOLO models.
 
     Args:
         labels_dir (str, optional): Path to directory containing COCO dataset annotation files.
@@ -308,7 +307,7 @@ def convert_coco(
                     continue
 
                 cls = coco80[ann["category_id"] - 1] if cls91to80 else ann["category_id"] - 1  # class
-                box = [cls] + box.tolist()
+                box = [cls, *box.tolist()]
                 if box not in bboxes:
                     bboxes.append(box)
                     if use_segments and ann.get("segmentation") is not None:
@@ -321,7 +320,7 @@ def convert_coco(
                         else:
                             s = [j for i in ann["segmentation"] for j in i]  # all segments concatenated
                             s = (np.array(s).reshape(-1, 2) / np.array([w, h])).reshape(-1).tolist()
-                        s = [cls] + s
+                        s = [cls, *s]
                         segments.append(s)
                     if use_keypoints and ann.get("keypoints") is not None:
                         keypoints.append(
@@ -348,11 +347,10 @@ def convert_coco(
 
 
 def convert_segment_masks_to_yolo_seg(masks_dir, output_dir, classes):
-    """
-    Converts a dataset of segmentation mask images to the YOLO segmentation format.
+    """Converts a dataset of segmentation mask images to the YOLO segmentation format.
 
-    This function takes the directory containing the binary format mask images and converts them into YOLO segmentation format.
-    The converted masks are saved in the specified output directory.
+    This function takes the directory containing the binary format mask images and converts them into YOLO segmentation
+    format. The converted masks are saved in the specified output directory.
 
     Args:
         masks_dir (str): The path to the directory where all mask images (png, jpg) are stored.
@@ -424,8 +422,7 @@ def convert_segment_masks_to_yolo_seg(masks_dir, output_dir, classes):
 
 
 def convert_dota_to_yolo_obb(dota_root_path: str):
-    """
-    Converts DOTA dataset annotations to YOLO OBB (Oriented Bounding Box) format.
+    """Converts DOTA dataset annotations to YOLO OBB (Oriented Bounding Box) format.
 
     The function processes images in the 'train' and 'val' folders of the DOTA dataset. For each image, it reads the
     associated label from the original labels directory and writes new labels in YOLO OBB format to a new directory.
@@ -517,8 +514,7 @@ def convert_dota_to_yolo_obb(dota_root_path: str):
 
 
 def min_index(arr1, arr2):
-    """
-    Find a pair of indexes with the shortest distance between two arrays of 2D points.
+    """Find a pair of indexes with the shortest distance between two arrays of 2D points.
 
     Args:
         arr1 (np.ndarray): A NumPy array of shape (N, 2) representing N 2D points.
@@ -532,13 +528,12 @@ def min_index(arr1, arr2):
 
 
 def merge_multi_segment(segments):
-    """
-    Merge multiple segments into one list by connecting the coordinates with the minimum distance between each segment.
-    This function connects these coordinates with a thin line to merge all segments into one.
+    """Merge multiple segments into one list by connecting the coordinates with the minimum distance between each
+    segment. This function connects these coordinates with a thin line to merge all segments into one.
 
     Args:
-        segments (List[List]): Original segmentations in COCO's JSON file.
-                               Each element is a list of coordinates, like [segmentation1, segmentation2,...].
+        segments (List[List]): Original segmentations in COCO's JSON file. Each element is a list of coordinates, like
+            [segmentation1, segmentation2,...].
 
     Returns:
         s (List[np.ndarray]): A list of connected segments represented as NumPy arrays.
@@ -582,14 +577,13 @@ def merge_multi_segment(segments):
 
 
 def yolo_bbox2segment(im_dir, save_dir=None, sam_model="sam_b.pt", device=None):
-    """
-    Converts existing object detection dataset (bounding boxes) to segmentation dataset or oriented bounding box (OBB)
-    in YOLO format. Generates segmentation data using SAM auto-annotator as needed.
+    """Converts existing object detection dataset (bounding boxes) to segmentation dataset or oriented bounding box
+    (OBB) in YOLO format. Generates segmentation data using SAM auto-annotator as needed.
 
     Args:
         im_dir (str | Path): Path to image directory to convert.
-        save_dir (str | Path): Path to save the generated labels, labels will be saved
-            into `labels-segment` in the same directory level of `im_dir` if save_dir is None.
+        save_dir (str | Path): Path to save the generated labels, labels will be saved into `labels-segment` in the same
+            directory level of `im_dir` if save_dir is None.
         sam_model (str): Segmentation model to use for intermediate segmentation data.
         device (int | str): The specific device to run SAM models.
 
@@ -646,12 +640,11 @@ def yolo_bbox2segment(im_dir, save_dir=None, sam_model="sam_b.pt", device=None):
 
 
 def create_synthetic_coco_dataset():
-    """
-    Creates a synthetic COCO dataset with random images based on filenames from label lists.
+    """Creates a synthetic COCO dataset with random images based on filenames from label lists.
 
-    This function downloads COCO labels, reads image filenames from label list files,
-    creates synthetic images for train2017 and val2017 subsets, and organizes
-    them in the COCO dataset structure. It uses multithreading to generate images efficiently.
+    This function downloads COCO labels, reads image filenames from label list files, creates synthetic images for
+    train2017 and val2017 subsets, and organizes them in the COCO dataset structure. It uses multithreading to generate
+    images efficiently.
 
     Examples:
         >>> from ultralytics.data.converter import create_synthetic_coco_dataset
@@ -704,11 +697,10 @@ def create_synthetic_coco_dataset():
 
 
 def convert_to_multispectral(path, n_channels=10, replace=False, zip=False):
-    """
-    Convert RGB images to multispectral images by interpolating across wavelength bands.
+    """Convert RGB images to multispectral images by interpolating across wavelength bands.
 
-    This function takes RGB images and interpolates them to create multispectral images with a specified number
-    of channels. It can process either a single image or a directory of images.
+    This function takes RGB images and interpolates them to create multispectral images with a specified number of
+    channels. It can process either a single image or a directory of images.
 
     Args:
         path (str | Path): Path to an image file or directory containing images to convert.
@@ -729,7 +721,9 @@ def convert_to_multispectral(path, n_channels=10, replace=False, zip=False):
     path = Path(path)
     if path.is_dir():
         # Process directory
-        im_files = sum([list(path.rglob(f"*.{ext}")) for ext in (IMG_FORMATS - {"tif", "tiff"})], [])
+        im_files = functools.reduce(
+            operator.iadd, [list(path.rglob(f"*.{ext}")) for ext in (IMG_FORMATS - {"tif", "tiff"})], []
+        )
         for im_path in im_files:
             try:
                 convert_to_multispectral(im_path, n_channels)

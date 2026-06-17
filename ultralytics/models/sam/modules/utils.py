@@ -1,14 +1,12 @@
 # Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
-from typing import Tuple
 
 import torch
 import torch.nn.functional as F
 
 
 def select_closest_cond_frames(frame_idx, cond_frame_outputs, max_cond_frame_num):
-    """
-    Select the closest conditioning frames to a given frame index.
+    """Select the closest conditioning frames to a given frame index.
 
     Args:
         frame_idx (int): Current frame index.
@@ -60,8 +58,7 @@ def select_closest_cond_frames(frame_idx, cond_frame_outputs, max_cond_frame_num
 
 
 def get_1d_sine_pe(pos_inds, dim, temperature=10000):
-    """
-    Generate 1D sinusoidal positional embeddings for given positions and dimensions.
+    """Generate 1D sinusoidal positional embeddings for given positions and dimensions.
 
     Args:
         pos_inds (torch.Tensor): Position indices for which to generate embeddings.
@@ -87,11 +84,10 @@ def get_1d_sine_pe(pos_inds, dim, temperature=10000):
 
 
 def init_t_xy(end_x: int, end_y: int):
-    """
-    Initialize 1D and 2D coordinate tensors for a grid of specified dimensions.
+    """Initialize 1D and 2D coordinate tensors for a grid of specified dimensions.
 
-    This function creates coordinate tensors for a grid with dimensions end_x × end_y. It generates a linear index tensor
-    and corresponding x and y coordinate tensors.
+    This function creates coordinate tensors for a grid with dimensions end_x × end_y. It generates a linear index
+    tensor and corresponding x and y coordinate tensors.
 
     Args:
         end_x (int): Width of the grid (number of columns).
@@ -118,11 +114,10 @@ def init_t_xy(end_x: int, end_y: int):
 
 
 def compute_axial_cis(dim: int, end_x: int, end_y: int, theta: float = 10000.0):
-    """
-    Compute axial complex exponential positional encodings for 2D spatial positions in a grid.
+    """Compute axial complex exponential positional encodings for 2D spatial positions in a grid.
 
-    This function generates complex exponential positional encodings for a 2D grid of spatial positions,
-    using separate frequency components for the x and y dimensions.
+    This function generates complex exponential positional encodings for a 2D grid of spatial positions, using separate
+    frequency components for the x and y dimensions.
 
     Args:
         dim (int): Dimension of the positional encoding.
@@ -131,10 +126,10 @@ def compute_axial_cis(dim: int, end_x: int, end_y: int, theta: float = 10000.0):
         theta (float, optional): Scaling factor for frequency computation.
 
     Returns:
-        freqs_cis_x (torch.Tensor): Complex exponential positional encodings for x-dimension with shape
-            (end_x*end_y, dim//4).
-        freqs_cis_y (torch.Tensor): Complex exponential positional encodings for y-dimension with shape
-            (end_x*end_y, dim//4).
+        freqs_cis_x (torch.Tensor): Complex exponential positional encodings for x-dimension with shape (end_x*end_y,
+            dim//4).
+        freqs_cis_y (torch.Tensor): Complex exponential positional encodings for y-dimension with shape (end_x*end_y,
+            dim//4).
 
     Examples:
         >>> dim, end_x, end_y = 128, 8, 8
@@ -156,11 +151,10 @@ def compute_axial_cis(dim: int, end_x: int, end_y: int, theta: float = 10000.0):
 
 
 def reshape_for_broadcast(freqs_cis: torch.Tensor, x: torch.Tensor):
-    """
-    Reshape frequency tensor for broadcasting with input tensor.
+    """Reshape frequency tensor for broadcasting with input tensor.
 
-    Reshapes a frequency tensor to ensure dimensional compatibility for broadcasting with an input tensor.
-    This function is typically used in positional encoding operations.
+    Reshapes a frequency tensor to ensure dimensional compatibility for broadcasting with an input tensor. This function
+    is typically used in positional encoding operations.
 
     Args:
         freqs_cis (torch.Tensor): Frequency tensor with shape matching the last two dimensions of x.
@@ -185,8 +179,7 @@ def apply_rotary_enc(
     freqs_cis: torch.Tensor,
     repeat_freqs_k: bool = False,
 ):
-    """
-    Apply rotary positional encoding to query and key tensors.
+    """Apply rotary positional encoding to query and key tensors.
 
     This function applies rotary positional encoding (RoPE) to query and key tensors using complex-valued frequency
     components. RoPE is a technique that injects relative position information into self-attention mechanisms.
@@ -194,10 +187,10 @@ def apply_rotary_enc(
     Args:
         xq (torch.Tensor): Query tensor to encode with positional information.
         xk (torch.Tensor): Key tensor to encode with positional information.
-        freqs_cis (torch.Tensor): Complex-valued frequency components for rotary encoding with shape matching the
-            last two dimensions of xq.
-        repeat_freqs_k (bool, optional): Whether to repeat frequency components along sequence length dimension
-            to match key sequence length.
+        freqs_cis (torch.Tensor): Complex-valued frequency components for rotary encoding with shape matching the last
+            two dimensions of xq.
+        repeat_freqs_k (bool, optional): Whether to repeat frequency components along sequence length dimension to match
+            key sequence length.
 
     Returns:
         xq_out (torch.Tensor): Query tensor with rotary positional encoding applied.
@@ -226,8 +219,7 @@ def apply_rotary_enc(
 
 
 def window_partition(x, window_size):
-    """
-    Partition input tensor into non-overlapping windows with padding if needed.
+    """Partition input tensor into non-overlapping windows with padding if needed.
 
     Args:
         x (torch.Tensor): Input tensor with shape (B, H, W, C).
@@ -257,23 +249,22 @@ def window_partition(x, window_size):
 
 
 def window_unpartition(windows, window_size, pad_hw, hw):
-    """
-    Unpartition windowed sequences into original sequences and remove padding.
+    """Unpartition windowed sequences into original sequences and remove padding.
 
-    This function reverses the windowing process, reconstructing the original input from windowed segments
-    and removing any padding that was added during the windowing process.
+    This function reverses the windowing process, reconstructing the original input from windowed segments and removing
+    any padding that was added during the windowing process.
 
     Args:
         windows (torch.Tensor): Input tensor of windowed sequences with shape (B * num_windows, window_size,
-            window_size, C), where B is the batch size, num_windows is the number of windows, window_size is
-            the size of each window, and C is the number of channels.
+            window_size, C), where B is the batch size, num_windows is the number of windows, window_size is the size of
+            each window, and C is the number of channels.
         window_size (int): Size of each window.
         pad_hw (Tuple[int, int]): Padded height and width (Hp, Wp) of the input before windowing.
         hw (Tuple[int, int]): Original height and width (H, W) of the input before padding and windowing.
 
     Returns:
-        (torch.Tensor): Unpartitioned sequences with shape (B, H, W, C), where B is the batch size, H and W
-            are the original height and width, and C is the number of channels.
+        (torch.Tensor): Unpartitioned sequences with shape (B, H, W, C), where B is the batch size, H and W are the
+            original height and width, and C is the number of channels.
 
     Examples:
         >>> windows = torch.rand(32, 8, 8, 64)  # 32 windows of size 8x8 with 64 channels
@@ -295,18 +286,16 @@ def window_unpartition(windows, window_size, pad_hw, hw):
 
 
 def get_rel_pos(q_size: int, k_size: int, rel_pos: torch.Tensor) -> torch.Tensor:
-    """
-    Extract relative positional embeddings based on query and key sizes.
+    """Extract relative positional embeddings based on query and key sizes.
 
     Args:
         q_size (int): Size of the query.
         k_size (int): Size of the key.
-        rel_pos (torch.Tensor): Relative position embeddings with shape (L, C), where L is the maximum relative
-            distance and C is the embedding dimension.
+        rel_pos (torch.Tensor): Relative position embeddings with shape (L, C), where L is the maximum relative distance
+            and C is the embedding dimension.
 
     Returns:
-        (torch.Tensor): Extracted positional embeddings according to relative positions, with shape (q_size,
-            k_size, C).
+        (torch.Tensor): Extracted positional embeddings according to relative positions, with shape (q_size, k_size, C).
 
     Examples:
         >>> q_size, k_size = 8, 16
@@ -341,11 +330,10 @@ def add_decomposed_rel_pos(
     q: torch.Tensor,
     rel_pos_h: torch.Tensor,
     rel_pos_w: torch.Tensor,
-    q_size: Tuple[int, int],
-    k_size: Tuple[int, int],
+    q_size: tuple[int, int],
+    k_size: tuple[int, int],
 ) -> torch.Tensor:
-    """
-    Add decomposed Relative Positional Embeddings to the attention map.
+    """Add decomposed Relative Positional Embeddings to the attention map.
 
     This function calculates and applies decomposed Relative Positional Embeddings as described in the MVITv2
     paper. It enhances the attention mechanism by incorporating spatial relationships between query and key
@@ -360,8 +348,8 @@ def add_decomposed_rel_pos(
         k_size (Tuple[int, int]): Spatial sequence size of key k as (k_h, k_w).
 
     Returns:
-        (torch.Tensor): Updated attention map with added relative positional embeddings, shape
-            (B, q_h * q_w, k_h * k_w).
+        (torch.Tensor): Updated attention map with added relative positional embeddings, shape (B, q_h * q_w, k_h *
+            k_w).
 
     Examples:
         >>> B, C, q_h, q_w, k_h, k_w = 1, 64, 8, 8, 8, 8

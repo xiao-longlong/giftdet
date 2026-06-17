@@ -10,9 +10,8 @@ from ultralytics.utils.ops import xywh2xyxy, xyxy2xywh
 
 
 class HungarianMatcher(nn.Module):
-    """
-    A module implementing the HungarianMatcher, which is a differentiable module to solve the assignment problem in an
-    end-to-end fashion.
+    """A module implementing the HungarianMatcher, which is a differentiable module to solve the assignment problem in
+    an end-to-end fashion.
 
     HungarianMatcher performs optimal assignment over the predicted and ground truth bounding boxes using a cost
     function that considers classification scores, bounding box coordinates, and optionally, mask predictions.
@@ -31,8 +30,7 @@ class HungarianMatcher(nn.Module):
     """
 
     def __init__(self, cost_gain=None, use_fl=True, with_mask=False, num_sample_points=12544, alpha=0.25, gamma=2.0):
-        """
-        Initialize a HungarianMatcher module for optimal assignment of predicted and ground truth bounding boxes.
+        """Initialize a HungarianMatcher module for optimal assignment of predicted and ground truth bounding boxes.
 
         The HungarianMatcher uses a cost function that considers classification scores, bounding box coordinates,
         and optionally mask predictions to perform optimal bipartite matching between predictions and ground truths.
@@ -57,8 +55,7 @@ class HungarianMatcher(nn.Module):
         self.gamma = gamma
 
     def forward(self, pred_bboxes, pred_scores, gt_bboxes, gt_cls, gt_groups, masks=None, gt_mask=None):
-        """
-        Forward pass for HungarianMatcher. Computes costs based on prediction and ground truth and finds the optimal
+        """Forward pass for HungarianMatcher. Computes costs based on prediction and ground truth and finds the optimal
         matching between predictions and ground truth based on these costs.
 
         Args:
@@ -66,13 +63,15 @@ class HungarianMatcher(nn.Module):
             pred_scores (torch.Tensor): Predicted scores with shape (batch_size, num_queries, num_classes).
             gt_cls (torch.Tensor): Ground truth classes with shape (num_gts, ).
             gt_bboxes (torch.Tensor): Ground truth bounding boxes with shape (num_gts, 4).
-            gt_groups (List[int]): List of length equal to batch size, containing the number of ground truths for
-                each image.
+            gt_groups (List[int]): List of length equal to batch size, containing the number of ground truths for each
+                image.
             masks (torch.Tensor, optional): Predicted masks with shape (batch_size, num_queries, height, width).
-            gt_mask (List[torch.Tensor], optional): List of ground truth masks, each with shape (num_masks, Height, Width).
+            gt_mask (List[torch.Tensor], optional): List of ground truth masks, each with shape (num_masks, Height,
+                Width).
 
         Returns:
-            (List[Tuple[torch.Tensor, torch.Tensor]]): A list of size batch_size, each element is a tuple (index_i, index_j), where:
+            (List[Tuple[torch.Tensor, torch.Tensor]]): A list of size batch_size, each element is a tuple (index_i,
+                index_j), where:
                 - index_i is the tensor of indices of the selected predictions (in order)
                 - index_j is the tensor of indices of the corresponding selected ground truth targets (in order)
                 For each batch element, it holds:
@@ -160,13 +159,12 @@ class HungarianMatcher(nn.Module):
 def get_cdn_group(
     batch, num_classes, num_queries, class_embed, num_dn=100, cls_noise_ratio=0.5, box_noise_scale=1.0, training=False
 ):
-    """
-    Get contrastive denoising training group with positive and negative samples from ground truths.
+    """Get contrastive denoising training group with positive and negative samples from ground truths.
 
     Args:
-        batch (dict): A dict that includes 'gt_cls' (torch.Tensor with shape (num_gts, )), 'gt_bboxes'
-            (torch.Tensor with shape (num_gts, 4)), 'gt_groups' (List[int]) which is a list of batch size length
-            indicating the number of gts of each image.
+        batch (dict): A dict that includes 'gt_cls' (torch.Tensor with shape (num_gts, )), 'gt_bboxes' (torch.Tensor
+            with shape (num_gts, 4)), 'gt_groups' (List[int]) which is a list of batch size length indicating the number
+            of gts of each image.
         num_classes (int): Number of classes.
         num_queries (int): Number of queries.
         class_embed (torch.Tensor): Embedding weights to map class labels to embedding space.

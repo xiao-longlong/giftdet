@@ -11,11 +11,10 @@ from .ops import HungarianMatcher
 
 
 class DETRLoss(nn.Module):
-    """
-    DETR (DEtection TRansformer) Loss class for calculating various loss components.
+    """DETR (DEtection TRansformer) Loss class for calculating various loss components.
 
-    This class computes classification loss, bounding box loss, GIoU loss, and optionally auxiliary losses for the
-    DETR object detection model.
+    This class computes classification loss, bounding box loss, GIoU loss, and optionally auxiliary losses for the DETR
+    object detection model.
 
     Attributes:
         nc (int): Number of classes.
@@ -43,8 +42,7 @@ class DETRLoss(nn.Module):
         gamma=1.5,
         alpha=0.25,
     ):
-        """
-        Initialize DETR loss function with customizable components and gains.
+        """Initialize DETR loss function with customizable components and gains.
 
         Uses default loss_gain if not provided. Initializes HungarianMatcher with preset cost gains. Supports auxiliary
         losses and various loss types.
@@ -76,8 +74,7 @@ class DETRLoss(nn.Module):
         self.device = None
 
     def _get_loss_class(self, pred_scores, targets, gt_scores, num_gts, postfix=""):
-        """
-        Compute classification loss based on predictions, target values, and ground truth scores.
+        """Compute classification loss based on predictions, target values, and ground truth scores.
 
         Args:
             pred_scores (torch.Tensor): Predicted class scores with shape (batch_size, num_queries, num_classes).
@@ -116,13 +113,12 @@ class DETRLoss(nn.Module):
         return {name_class: loss_cls.squeeze() * self.loss_gain["class"]}
 
     def _get_loss_bbox(self, pred_bboxes, gt_bboxes, postfix=""):
-        """
-        Compute bounding box and GIoU losses for predicted and ground truth bounding boxes.
+        """Compute bounding box and GIoU losses for predicted and ground truth bounding boxes.
 
         Args:
             pred_bboxes (torch.Tensor): Predicted bounding boxes with shape (batch_size, num_queries, 4).
-            gt_bboxes (torch.Tensor): Ground truth bounding boxes with shape (N, 4), where N is the total
-                number of ground truth boxes.
+            gt_bboxes (torch.Tensor): Ground truth bounding boxes with shape (N, 4), where N is the total number of
+                ground truth boxes.
             postfix (str): String to append to the loss names for identification in multi-loss scenarios.
 
         Returns:
@@ -194,8 +190,7 @@ class DETRLoss(nn.Module):
         masks=None,
         gt_mask=None,
     ):
-        """
-        Get auxiliary losses for intermediate decoder layers.
+        """Get auxiliary losses for intermediate decoder layers.
 
         Args:
             pred_bboxes (torch.Tensor): Predicted bounding boxes from auxiliary layers.
@@ -256,8 +251,7 @@ class DETRLoss(nn.Module):
 
     @staticmethod
     def _get_index(match_indices):
-        """
-        Extract batch indices, source indices, and destination indices from match indices.
+        """Extract batch indices, source indices, and destination indices from match indices.
 
         Args:
             match_indices (List[tuple]): List of tuples containing matched indices.
@@ -271,8 +265,7 @@ class DETRLoss(nn.Module):
         return (batch_idx, src_idx), dst_idx
 
     def _get_assigned_bboxes(self, pred_bboxes, gt_bboxes, match_indices):
-        """
-        Assign predicted bounding boxes to ground truth bounding boxes based on match indices.
+        """Assign predicted bounding boxes to ground truth bounding boxes based on match indices.
 
         Args:
             pred_bboxes (torch.Tensor): Predicted bounding boxes.
@@ -308,8 +301,7 @@ class DETRLoss(nn.Module):
         postfix="",
         match_indices=None,
     ):
-        """
-        Calculate losses for a single prediction layer.
+        """Calculate losses for a single prediction layer.
 
         Args:
             pred_bboxes (torch.Tensor): Predicted bounding boxes.
@@ -348,16 +340,15 @@ class DETRLoss(nn.Module):
         }
 
     def forward(self, pred_bboxes, pred_scores, batch, postfix="", **kwargs):
-        """
-        Calculate loss for predicted bounding boxes and scores.
+        """Calculate loss for predicted bounding boxes and scores.
 
         Args:
             pred_bboxes (torch.Tensor): Predicted bounding boxes, shape [l, b, query, 4].
             pred_scores (torch.Tensor): Predicted class scores, shape [l, b, query, num_classes].
             batch (dict): Batch information containing:
-                cls (torch.Tensor): Ground truth classes, shape [num_gts].
-                bboxes (torch.Tensor): Ground truth bounding boxes, shape [num_gts, 4].
-                gt_groups (List[int]): Number of ground truths for each image in the batch.
+            cls (torch.Tensor): Ground truth classes, shape [num_gts].
+            bboxes (torch.Tensor): Ground truth bounding boxes, shape [num_gts, 4].
+            gt_groups (List[int]): Number of ground truths for each image in the batch.
             postfix (str): Postfix for loss names.
             **kwargs (Any): Additional arguments, may include 'match_indices'.
 
@@ -387,16 +378,14 @@ class DETRLoss(nn.Module):
 
 
 class RTDETRDetectionLoss(DETRLoss):
-    """
-    Real-Time DeepTracker (RT-DETR) Detection Loss class that extends the DETRLoss.
+    """Real-Time DeepTracker (RT-DETR) Detection Loss class that extends the DETRLoss.
 
     This class computes the detection loss for the RT-DETR model, which includes the standard detection loss as well as
     an additional denoising training loss when provided with denoising metadata.
     """
 
     def forward(self, preds, batch, dn_bboxes=None, dn_scores=None, dn_meta=None):
-        """
-        Forward pass to compute detection loss with optional denoising loss.
+        """Forward pass to compute detection loss with optional denoising loss.
 
         Args:
             preds (tuple): Tuple containing predicted bounding boxes and scores.
@@ -430,8 +419,7 @@ class RTDETRDetectionLoss(DETRLoss):
 
     @staticmethod
     def get_dn_match_indices(dn_pos_idx, dn_num_group, gt_groups):
-        """
-        Get match indices for denoising.
+        """Get match indices for denoising.
 
         Args:
             dn_pos_idx (List[torch.Tensor]): List of tensors containing positive indices for denoising.

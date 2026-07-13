@@ -9,11 +9,10 @@ from ultralytics.utils.plotting import colors
 
 
 class DistanceCalculation(BaseSolution):
-    """
-    A class to calculate distance between two objects in a real-time video stream based on their tracks.
+    """A class to calculate distance between two objects in a real-time video stream based on their tracks.
 
-    This class extends BaseSolution to provide functionality for selecting objects and calculating the distance
-    between them in a video stream using YOLO object detection and tracking.
+    This class extends BaseSolution to provide functionality for selecting objects and calculating the distance between
+    them in a video stream using YOLO object detection and tracking.
 
     Attributes:
         left_mouse_count (int): Counter for left mouse button clicks.
@@ -42,8 +41,7 @@ class DistanceCalculation(BaseSolution):
         self.centroids = []  # Store centroids of selected objects
 
     def mouse_event_for_distance(self, event, x, y, flags, param):
-        """
-        Handles mouse events to select regions in a real-time video stream for distance calculation.
+        """Handles mouse events to select regions in a real-time video stream for distance calculation.
 
         Args:
             event (int): Type of mouse event (e.g., cv2.EVENT_MOUSEMOVE, cv2.EVENT_LBUTTONDOWN).
@@ -68,8 +66,7 @@ class DistanceCalculation(BaseSolution):
             self.left_mouse_count = 0
 
     def process(self, im0):
-        """
-        Processes a video frame and calculates the distance between two selected bounding boxes.
+        """Processes a video frame and calculates the distance between two selected bounding boxes.
 
         This method extracts tracks from the input frame, annotates bounding boxes, and calculates the distance
         between two user-selected objects if they have been chosen.
@@ -78,8 +75,8 @@ class DistanceCalculation(BaseSolution):
             im0 (numpy.ndarray): The input image frame to process.
 
         Returns:
-            (SolutionResults): Contains processed image `plot_im`, `total_tracks` (int) representing the total number
-                of tracked objects, and `pixels_distance` (float) representing the distance between selected objects
+            (SolutionResults): Contains processed image `plot_im`, `total_tracks` (int) representing the total number of
+                tracked objects, and `pixels_distance` (float) representing the distance between selected objects
                 in pixels.
 
         Examples:

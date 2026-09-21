@@ -1,7 +1,8 @@
 # Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
+from __future__ import annotations
+
 import argparse
-from typing import List
 
 import cv2
 import numpy as np
@@ -13,11 +14,10 @@ from ultralytics.utils.checks import check_requirements, check_yaml
 
 
 class RTDETR:
-    """
-    RTDETR object detection model class for handling inference and visualization.
+    """RTDETR object detection model class for handling inference and visualization.
 
-    This class implements the RT-DETR (Real-Time Detection Transformer) model for object detection tasks,
-    supporting ONNX model inference and visualization of detection results.
+    This class implements the RT-DETR (Real-Time Detection Transformer) model for object detection tasks, supporting
+    ONNX model inference and visualization of detection results.
 
     Attributes:
         model_path (str): Path to the ONNX model file.
@@ -36,8 +36,7 @@ class RTDETR:
     """
 
     def __init__(self, model_path: str, img_path: str, conf_thres: float = 0.5, iou_thres: float = 0.5):
-        """
-        Initialize the RTDETR object detection model.
+        """Initialize the RTDETR object detection model.
 
         Args:
             model_path (str): Path to the ONNX model file.
@@ -63,8 +62,7 @@ class RTDETR:
         self.color_palette = np.random.uniform(0, 255, size=(len(self.classes), 3))
 
     def draw_detections(self, box: np.ndarray, score: float, class_id: int) -> None:
-        """
-        Draw bounding boxes and labels on the input image for detected objects.
+        """Draw bounding boxes and labels on the input image for detected objects.
 
         Args:
             box (np.ndarray): Detected bounding box coordinates [x1, y1, x2, y2].
@@ -105,8 +103,7 @@ class RTDETR:
         )
 
     def preprocess(self) -> np.ndarray:
-        """
-        Preprocess the input image for model inference.
+        """Preprocess the input image for model inference.
 
         Loads the image, converts color space, resizes to model input dimensions, and normalizes pixel values.
 
@@ -137,8 +134,7 @@ class RTDETR:
         return image_data
 
     def bbox_cxcywh_to_xyxy(self, boxes: np.ndarray) -> np.ndarray:
-        """
-        Convert bounding boxes from (cx, cy, w, h) format to (x_min, y_min, x_max, y_max) format.
+        """Convert bounding boxes from (cx, cy, w, h) format to (x_min, y_min, x_max, y_max) format.
 
         Args:
             boxes (np.ndarray): Array of shape (N, 4) where each row represents a bounding box in (cx, cy, w, h) format.
@@ -159,9 +155,8 @@ class RTDETR:
         # Return the bounding boxes in (x_min, y_min, x_max, y_max) format
         return np.column_stack((x_min, y_min, x_max, y_max))
 
-    def postprocess(self, model_output: List[np.ndarray]) -> np.ndarray:
-        """
-        Postprocess model output to extract and visualize detections.
+    def postprocess(self, model_output: list[np.ndarray]) -> np.ndarray:
+        """Postprocess model output to extract and visualize detections.
 
         Args:
             model_output (List[np.ndarray]): Output tensors from the model inference.
@@ -198,8 +193,7 @@ class RTDETR:
         return self.img
 
     def main(self) -> np.ndarray:
-        """
-        Execute object detection on the input image using the ONNX model.
+        """Execute object detection on the input image using the ONNX model.
 
         Performs the complete detection pipeline: preprocessing, inference, and postprocessing.
 

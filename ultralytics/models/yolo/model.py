@@ -1,5 +1,7 @@
 # Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
+from __future__ import annotations
+
 from pathlib import Path
 
 from ultralytics.data.build import load_inference_source
@@ -22,16 +24,15 @@ class YOLO(Model):
     """YOLO (You Only Look Once) object detection model."""
 
     def __init__(self, model="yolo11n.pt", task=None, verbose=False):
-        """
-        Initialize a YOLO model.
+        """Initialize a YOLO model.
 
         This constructor initializes a YOLO model, automatically switching to specialized model types
         (YOLOWorld or YOLOE) based on the model filename.
 
         Args:
             model (str | Path): Model name or path to model file, i.e. 'yolo11n.pt', 'yolo11n.yaml'.
-            task (str | None): YOLO task specification, i.e. 'detect', 'segment', 'classify', 'pose', 'obb'.
-                Defaults to auto-detection based on model.
+            task (str | None): YOLO task specification, i.e. 'detect', 'segment', 'classify', 'pose', 'obb'. Defaults to
+                auto-detection based on model.
             verbose (bool): Display model info on load.
 
         Examples:
@@ -93,8 +94,7 @@ class YOLOWorld(Model):
     """YOLO-World object detection model."""
 
     def __init__(self, model="yolov8s-world.pt", verbose=False) -> None:
-        """
-        Initialize YOLOv8-World model with a pre-trained model file.
+        """Initialize YOLOv8-World model with a pre-trained model file.
 
         Loads a YOLOv8-World model for object detection. If no custom class names are provided, it assigns default
         COCO class names.
@@ -122,8 +122,7 @@ class YOLOWorld(Model):
         }
 
     def set_classes(self, classes):
-        """
-        Set the model's class names for detection.
+        """Set the model's class names for detection.
 
         Args:
             classes (list[str]): A list of categories i.e. ["person"].
@@ -144,8 +143,7 @@ class YOLOE(Model):
     """YOLOE object detection and segmentation model."""
 
     def __init__(self, model="yoloe-11s-seg.pt", task=None, verbose=False) -> None:
-        """
-        Initialize YOLOE model with a pre-trained model file.
+        """Initialize YOLOE model with a pre-trained model file.
 
         Args:
             model (str | Path): Path to the pre-trained model file. Supports *.pt and *.yaml formats.
@@ -182,8 +180,7 @@ class YOLOE(Model):
         return self.model.get_text_pe(texts)
 
     def get_visual_pe(self, img, visual):
-        """
-        Get visual positional embeddings for the given image and visual features.
+        """Get visual positional embeddings for the given image and visual features.
 
         This method extracts positional embeddings from visual features based on the input image. It requires
         that the model is an instance of YOLOEModel.
@@ -205,8 +202,7 @@ class YOLOE(Model):
         return self.model.get_visual_pe(img, visual)
 
     def set_vocab(self, vocab, names):
-        """
-        Set vocabulary and class names for the YOLOE model.
+        """Set vocabulary and class names for the YOLOE model.
 
         This method configures the vocabulary and class names used by the model for text processing and
         classification tasks. The model must be an instance of YOLOEModel.
@@ -231,8 +227,7 @@ class YOLOE(Model):
         return self.model.get_vocab(names)
 
     def set_classes(self, classes, embeddings):
-        """
-        Set the model's class names and embeddings for detection.
+        """Set the model's class names and embeddings for detection.
 
         Args:
             classes (list[str]): A list of categories i.e. ["person"].
@@ -255,8 +250,7 @@ class YOLOE(Model):
         refer_data=None,
         **kwargs,
     ):
-        """
-        Validate the model using text or visual prompts.
+        """Validate the model using text or visual prompts.
 
         Args:
             validator (callable, optional): A callable validator function. If None, a default validator is loaded.
@@ -279,24 +273,23 @@ class YOLOE(Model):
         self,
         source=None,
         stream: bool = False,
-        visual_prompts: dict = {},
+        visual_prompts: dict | None = None,
         refer_image=None,
         predictor=None,
         **kwargs,
     ):
-        """
-        Run prediction on images, videos, directories, streams, etc.
+        """Run prediction on images, videos, directories, streams, etc.
 
         Args:
-            source (str | int | PIL.Image | np.ndarray, optional): Source for prediction. Accepts image paths,
-                directory paths, URL/YouTube streams, PIL images, numpy arrays, or webcam indices.
-            stream (bool): Whether to stream the prediction results. If True, results are yielded as a
-                generator as they are computed.
-            visual_prompts (dict): Dictionary containing visual prompts for the model. Must include 'bboxes' and
-                'cls' keys when non-empty.
+            source (str | int | PIL.Image | np.ndarray, optional): Source for prediction. Accepts image paths, directory
+                paths, URL/YouTube streams, PIL images, numpy arrays, or webcam indices.
+            stream (bool): Whether to stream the prediction results. If True, results are yielded as a generator as they
+                are computed.
+            visual_prompts (dict): Dictionary containing visual prompts for the model. Must include 'bboxes' and 'cls'
+                keys when non-empty.
             refer_image (str | PIL.Image | np.ndarray, optional): Reference image for visual prompts.
-            predictor (callable, optional): Custom predictor function. If None, a predictor is automatically
-                loaded based on the task.
+            predictor (callable, optional): Custom predictor function. If None, a predictor is automatically loaded
+                based on the task.
             **kwargs (Any): Additional keyword arguments passed to the predictor.
 
         Returns:
@@ -309,6 +302,8 @@ class YOLOE(Model):
             >>> prompts = {"bboxes": [[10, 20, 100, 200]], "cls": ["person"]}
             >>> results = model.predict("path/to/image.jpg", visual_prompts=prompts)
         """
+        if visual_prompts is None:
+            visual_prompts = {}
         if len(visual_prompts):
             assert "bboxes" in visual_prompts and "cls" in visual_prompts, (
                 f"Expected 'bboxes' and 'cls' in visual prompts, but got {visual_prompts.keys()}"

@@ -5,8 +5,7 @@ from ultralytics.utils import DEFAULT_CFG, LOGGER, ops
 
 
 class PosePredictor(DetectionPredictor):
-    """
-    A class extending the DetectionPredictor class for prediction based on a pose model.
+    """A class extending the DetectionPredictor class for prediction based on a pose model.
 
     This class specializes in pose estimation, handling keypoints detection alongside standard object detection
     capabilities inherited from DetectionPredictor.
@@ -27,8 +26,7 @@ class PosePredictor(DetectionPredictor):
     """
 
     def __init__(self, cfg=DEFAULT_CFG, overrides=None, _callbacks=None):
-        """
-        Initialize PosePredictor, a specialized predictor for pose estimation tasks.
+        """Initialize PosePredictor, a specialized predictor for pose estimation tasks.
 
         This initializer sets up a PosePredictor instance, configuring it for pose detection tasks and handling
         device-specific warnings for Apple MPS.
@@ -54,8 +52,7 @@ class PosePredictor(DetectionPredictor):
             )
 
     def construct_result(self, pred, img, orig_img, img_path):
-        """
-        Construct the result object from the prediction, including keypoints.
+        """Construct the result object from the prediction, including keypoints.
 
         This method extends the parent class implementation by extracting keypoint data from predictions
         and adding them to the result object.
@@ -68,7 +65,8 @@ class PosePredictor(DetectionPredictor):
             img_path (str): The path to the original image file.
 
         Returns:
-            (Results): The result object containing the original image, image path, class names, bounding boxes, and keypoints.
+            (Results): The result object containing the original image, image path, class names, bounding boxes, and
+                keypoints.
         """
         result = super().construct_result(pred, img, orig_img, img_path)
         # Extract keypoints from prediction and reshape according to model's keypoint shape

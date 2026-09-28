@@ -64,11 +64,10 @@ Example:
 
 
 class BasePredictor:
-    """
-    A base class for creating predictors.
+    """A base class for creating predictors.
 
-    This class provides the foundation for prediction functionality, handling model setup, inference,
-    and result processing across various input sources.
+    This class provides the foundation for prediction functionality, handling model setup, inference, and result
+    processing across various input sources.
 
     Attributes:
         args (SimpleNamespace): Configuration for the predictor.
@@ -106,8 +105,7 @@ class BasePredictor:
     """
 
     def __init__(self, cfg=DEFAULT_CFG, overrides=None, _callbacks=None):
-        """
-        Initialize the BasePredictor class.
+        """Initialize the BasePredictor class.
 
         Args:
             cfg (str | dict): Path to a configuration file or a configuration dictionary.
@@ -142,8 +140,7 @@ class BasePredictor:
         callbacks.add_integration_callbacks(self)
 
     def preprocess(self, im):
-        """
-        Prepares input image before inference.
+        """Prepares input image before inference.
 
         Args:
             im (torch.Tensor | List(np.ndarray)): Images of shape (N, 3, h, w) for tensor, [(h, w, 3) x N] for list.
@@ -173,8 +170,7 @@ class BasePredictor:
         return self.model(im, augment=self.args.augment, visualize=visualize, embed=self.args.embed, *args, **kwargs)
 
     def pre_transform(self, im):
-        """
-        Pre-transform input image before inference.
+        """Pre-transform input image before inference.
 
         Args:
             im (List[np.ndarray]): Images of shape (N, 3, h, w) for tensor, [(h, w, 3) x N] for list.
@@ -197,12 +193,11 @@ class BasePredictor:
         return preds
 
     def __call__(self, source=None, model=None, stream=False, *args, **kwargs):
-        """
-        Perform inference on an image or stream.
+        """Perform inference on an image or stream.
 
         Args:
-            source (str | Path | List[str] | List[Path] | List[np.ndarray] | np.ndarray | torch.Tensor | None):
-                Source for inference.
+            source (str | Path | List[str] | List[Path] | List[np.ndarray] | np.ndarray | torch.Tensor | None): Source
+                for inference.
             model (str | Path | torch.nn.Module | None): Model for inference.
             stream (bool): Whether to stream the inference results. If True, returns a generator.
             *args (Any): Additional arguments for the inference method.
@@ -218,19 +213,18 @@ class BasePredictor:
             return list(self.stream_inference(source, model, *args, **kwargs))  # merge list of Result into one
 
     def predict_cli(self, source=None, model=None):
-        """
-        Method used for Command Line Interface (CLI) prediction.
+        """Method used for Command Line Interface (CLI) prediction.
 
         This function is designed to run predictions using the CLI. It sets up the source and model, then processes
         the inputs in a streaming manner. This method ensures that no outputs accumulate in memory by consuming the
         generator without storing results.
 
         Args:
-            source (str | Path | List[str] | List[Path] | List[np.ndarray] | np.ndarray | torch.Tensor | None):
-                Source for inference.
+            source (str | Path | List[str] | List[Path] | List[np.ndarray] | np.ndarray | torch.Tensor | None): Source
+                for inference.
             model (str | Path | torch.nn.Module | None): Model for inference.
 
-        Note:
+        Notes:
             Do not modify this function or remove the generator. The generator ensures that no outputs are
             accumulated in memory, which is critical for preventing memory issues during long-running predictions.
         """
@@ -239,12 +233,11 @@ class BasePredictor:
             pass
 
     def setup_source(self, source):
-        """
-        Set up source and inference mode.
+        """Set up source and inference mode.
 
         Args:
-            source (str | Path | List[str] | List[Path] | List[np.ndarray] | np.ndarray | torch.Tensor):
-                Source for inference.
+            source (str | Path | List[str] | List[Path] | List[np.ndarray] | np.ndarray | torch.Tensor): Source for
+                inference.
         """
         self.imgsz = check_imgsz(self.args.imgsz, stride=self.model.stride, min_dim=2)  # check image size
         self.dataset = load_inference_source(
@@ -266,12 +259,11 @@ class BasePredictor:
 
     @smart_inference_mode()
     def stream_inference(self, source=None, model=None, *args, **kwargs):
-        """
-        Stream real-time inference on camera feed and save results to file.
+        """Stream real-time inference on camera feed and save results to file.
 
         Args:
-            source (str | Path | List[str] | List[Path] | List[np.ndarray] | np.ndarray | torch.Tensor | None):
-                Source for inference.
+            source (str | Path | List[str] | List[Path] | List[np.ndarray] | np.ndarray | torch.Tensor | None): Source
+                for inference.
             model (str | Path | torch.nn.Module | None): Model for inference.
             *args (Any): Additional arguments for the inference method.
             **kwargs (Any): Additional keyword arguments for the inference method.
@@ -366,8 +358,7 @@ class BasePredictor:
         self.run_callbacks("on_predict_end")
 
     def setup_model(self, model, verbose=True):
-        """
-        Initialize YOLO model with given parameters and set it to evaluation mode.
+        """Initialize YOLO model with given parameters and set it to evaluation mode.
 
         Args:
             model (str | Path | torch.nn.Module | None): Model to load or use.
@@ -391,8 +382,7 @@ class BasePredictor:
         self.model.eval()
 
     def write_results(self, i, p, im, s):
-        """
-        Write inference results to a file or directory.
+        """Write inference results to a file or directory.
 
         Args:
             i (int): Index of the current image in the batch.
@@ -442,8 +432,7 @@ class BasePredictor:
         return string
 
     def save_predicted_images(self, save_path="", frame=0):
-        """
-        Save video predictions as mp4 or images as jpg at specified path.
+        """Save video predictions as mp4 or images as jpg at specified path.
 
         Args:
             save_path (str): Path to save the results.

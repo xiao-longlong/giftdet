@@ -18,8 +18,7 @@ from .val import RTDETRValidator
 
 
 class RTDETR(Model):
-    """
-    Interface for Baidu's RT-DETR model, a Vision Transformer-based real-time object detector.
+    """Interface for Baidu's RT-DETR model, a Vision Transformer-based real-time object detector.
 
     This model provides real-time performance with high accuracy. It supports efficient hybrid encoding, IoU-aware query
     selection, and adaptable inference speed.
@@ -34,8 +33,7 @@ class RTDETR(Model):
     """
 
     def __init__(self, model: str = "rtdetr-l.pt") -> None:
-        """
-        Initialize the RT-DETR model with the given pre-trained model file.
+        """Initialize the RT-DETR model with the given pre-trained model file.
 
         Args:
             model (str): Path to the pre-trained model. Supports .pt, .yaml, and .yml formats.
@@ -47,8 +45,7 @@ class RTDETR(Model):
 
     @property
     def task_map(self) -> dict:
-        """
-        Returns a task map for RT-DETR, associating tasks with corresponding Ultralytics classes.
+        """Returns a task map for RT-DETR, associating tasks with corresponding Ultralytics classes.
 
         Returns:
             (dict): A dictionary mapping task names to Ultralytics task classes for the RT-DETR model.

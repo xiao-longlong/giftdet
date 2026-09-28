@@ -5,8 +5,8 @@ import copy
 import math
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
+from torch import nn
 from torch.nn.init import constant_, xavier_uniform_
 
 from ultralytics.utils.tal import TORCH_1_10, dist2bbox, dist2rbox, make_anchors
@@ -17,7 +17,7 @@ from .conv import Conv, DWConv
 from .transformer import MLP, DeformableTransformerDecoder, DeformableTransformerDecoderLayer
 from .utils import bias_init_with_prob, linear_init
 
-__all__ = "Detect", "Segment", "Pose", "Classify", "OBB", "RTDETRDecoder", "v10Detect", "YOLOEDetect", "YOLOESegment"
+__all__ = "OBB", "Classify", "Detect", "Pose", "RTDETRDecoder", "Segment", "YOLOEDetect", "YOLOESegment", "v10Detect"
 
 
 class Detect(nn.Module):
@@ -77,8 +77,7 @@ class Detect(nn.Module):
         return y if self.export else (y, x)
 
     def forward_end2end(self, x):
-        """
-        Performs forward pass of the v10Detect module.
+        """Performs forward pass of the v10Detect module.
 
         Args:
             x (List[torch.Tensor]): Input feature maps from different levels.
@@ -103,8 +102,7 @@ class Detect(nn.Module):
         return y if self.export else (y, {"one2many": x, "one2one": one2one})
 
     def _inference(self, x):
-        """
-        Decode predicted bounding boxes and class probabilities based on multiple-level feature maps.
+        """Decode predicted bounding boxes and class probabilities based on multiple-level feature maps.
 
         Args:
             x (List[torch.Tensor]): List of feature maps from different detection layers.
@@ -162,8 +160,7 @@ class Detect(nn.Module):
 
     @staticmethod
     def postprocess(preds: torch.Tensor, max_det: int, nc: int = 80):
-        """
-        Post-processes YOLO model predictions.
+        """Post-processes YOLO model predictions.
 
         Args:
             preds (torch.Tensor): Raw predictions with shape (batch_size, num_anchors, 4 + nc) with last dimension
@@ -570,8 +567,7 @@ class YOLOESegment(YOLOEDetect):
 
 
 class RTDETRDecoder(nn.Module):
-    """
-    Real-Time Deformable Transformer Decoder (RTDETRDecoder) module for object detection.
+    """Real-Time Deformable Transformer Decoder (RTDETRDecoder) module for object detection.
 
     This decoder module utilizes Transformer architecture along with deformable convolutions to predict bounding boxes
     and class labels for objects in an image. It integrates features from multiple layers and runs through a series of
@@ -599,8 +595,7 @@ class RTDETRDecoder(nn.Module):
         box_noise_scale=1.0,
         learnt_init_query=False,
     ):
-        """
-        Initializes the RTDETRDecoder module with the given parameters.
+        """Initializes the RTDETRDecoder module with the given parameters.
 
         Args:
             nc (int): Number of classes. Default is 80.
@@ -660,8 +655,7 @@ class RTDETRDecoder(nn.Module):
         self._reset_parameters()
 
     def forward(self, x, batch=None):
-        """
-        Runs the forward pass of the module, returning bounding box and classification scores for the input.
+        """Runs the forward pass of the module, returning bounding box and classification scores for the input.
 
         Args:
             x (List[torch.Tensor]): List of feature maps from the backbone.
@@ -709,8 +703,7 @@ class RTDETRDecoder(nn.Module):
         return y if self.export else (y, x)
 
     def _generate_anchors(self, shapes, grid_size=0.05, dtype=torch.float32, device="cpu", eps=1e-2):
-        """
-        Generates anchor bounding boxes for given shapes with specific grid size and validates them.
+        """Generates anchor bounding boxes for given shapes with specific grid size and validates them.
 
         Args:
             shapes (list): List of feature map shapes.
@@ -741,8 +734,7 @@ class RTDETRDecoder(nn.Module):
         return anchors, valid_mask
 
     def _get_encoder_input(self, x):
-        """
-        Processes and returns encoder inputs by getting projection features from input and concatenating them.
+        """Processes and returns encoder inputs by getting projection features from input and concatenating them.
 
         Args:
             x (List[torch.Tensor]): List of feature maps from the backbone.
@@ -767,8 +759,7 @@ class RTDETRDecoder(nn.Module):
         return feats, shapes
 
     def _get_decoder_input(self, feats, shapes, dn_embed=None, dn_bbox=None):
-        """
-        Generates and prepares the input required for the decoder from the provided features and shapes.
+        """Generates and prepares the input required for the decoder from the provided features and shapes.
 
         Args:
             feats (torch.Tensor): Processed features from encoder.
@@ -841,8 +832,7 @@ class RTDETRDecoder(nn.Module):
 
 
 class v10Detect(Detect):
-    """
-    v10 Detection head from https://arxiv.org/pdf/2405.14458.
+    """v10 Detection head from https://arxiv.org/pdf/2405.14458.
 
     Args:
         nc (int): Number of classes.
@@ -855,7 +845,6 @@ class v10Detect(Detect):
         __init__(self, nc=80, ch=()): Initializes the v10Detect object.
         forward(self, x): Performs forward pass of the v10Detect module.
         bias_init(self): Initializes biases of the Detect module.
-
     """
 
     end2end = True

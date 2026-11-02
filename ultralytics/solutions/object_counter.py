@@ -7,8 +7,7 @@ from ultralytics.utils.plotting import colors
 
 
 class ObjectCounter(BaseSolution):
-    """
-    A class to manage the counting of objects in a real-time video stream based on their tracks.
+    """A class to manage the counting of objects in a real-time video stream based on their tracks.
 
     This class extends the BaseSolution class and provides functionality for counting objects moving in and out of a
     specified region in a video stream. It supports both polygonal and linear regions for counting.
@@ -49,8 +48,7 @@ class ObjectCounter(BaseSolution):
         self.margin = self.line_width * 2  # Scales the background rectangle size to display counts properly
 
     def count_objects(self, current_centroid, track_id, prev_position, cls):
-        """
-        Counts objects within a polygonal or linear region based on their tracks.
+        """Counts objects within a polygonal or linear region based on their tracks.
 
         Args:
             current_centroid (Tuple[float, float]): Current centroid coordinates (x, y) in the current frame.
@@ -98,11 +96,8 @@ class ObjectCounter(BaseSolution):
                 region_width = max(p[0] for p in self.region) - min(p[0] for p in self.region)
                 region_height = max(p[1] for p in self.region) - min(p[1] for p in self.region)
 
-                if (
-                    region_width < region_height
-                    and current_centroid[0] > prev_position[0]
-                    or region_width >= region_height
-                    and current_centroid[1] > prev_position[1]
+                if (region_width < region_height and current_centroid[0] > prev_position[0]) or (
+                    region_width >= region_height and current_centroid[1] > prev_position[1]
                 ):  # Moving right or downward
                     self.in_count += 1
                     self.classwise_counts[self.names[cls]]["IN"] += 1
@@ -112,8 +107,7 @@ class ObjectCounter(BaseSolution):
                 self.counted_ids.append(track_id)
 
     def display_counts(self, plot_im):
-        """
-        Display object counts on the input image or frame.
+        """Display object counts on the input image or frame.
 
         Args:
             plot_im (numpy.ndarray): The image or frame to display counts on.
@@ -133,8 +127,7 @@ class ObjectCounter(BaseSolution):
             self.annotator.display_analytics(plot_im, labels_dict, (104, 31, 17), (255, 255, 255), self.margin)
 
     def process(self, im0):
-        """
-        Process input data (frames or object tracks) and update object counts.
+        """Process input data (frames or object tracks) and update object counts.
 
         This method initializes the counting region, extracts tracks, draws bounding boxes and regions, updates
         object counts, and displays the results on the input image.
@@ -144,8 +137,8 @@ class ObjectCounter(BaseSolution):
 
         Returns:
             (SolutionResults): Contains processed image `im0`, 'in_count' (int, count of objects entering the region),
-                'out_count' (int, count of objects exiting the region), 'classwise_count' (dict, per-class object count),
-                and 'total_tracks' (int, total number of tracked objects).
+                'out_count' (int, count of objects exiting the region), 'classwise_count' (dict, per-class object
+                count), and 'total_tracks' (int, total number of tracked objects).
 
         Examples:
             >>> counter = ObjectCounter()

@@ -14,8 +14,7 @@ from ultralytics.utils.plotting import Annotator
 
 
 class BaseSolution:
-    """
-    A base class for managing Ultralytics Solutions.
+    """A base class for managing Ultralytics Solutions.
 
     This class provides core functionality for various Ultralytics Solutions, including model loading, object tracking,
     and region initialization.
@@ -47,8 +46,7 @@ class BaseSolution:
     """
 
     def __init__(self, is_cli=False, **kwargs):
-        """
-        Initializes the BaseSolution class with configuration settings and the YOLO model.
+        """Initializes the BaseSolution class with configuration settings and the YOLO model.
 
         Args:
             is_cli (bool): Enables CLI mode if set to True.
@@ -106,8 +104,7 @@ class BaseSolution:
             self.track_history = defaultdict(list)
 
     def adjust_box_label(self, cls, conf, track_id=None):
-        """
-        Generates a formatted label for a bounding box.
+        """Generates a formatted label for a bounding box.
 
         This method constructs a label string for a bounding box using the class index and confidence score.
         Optionally includes the track ID if provided. The label format adapts based on the display settings
@@ -125,8 +122,7 @@ class BaseSolution:
         return (f"{name} {conf:.2f}" if self.show_conf else name) if self.show_labels else None
 
     def extract_tracks(self, im0):
-        """
-        Applies object tracking and extracts tracks from an input image or frame.
+        """Applies object tracking and extracts tracks from an input image or frame.
 
         Args:
             im0 (np.ndarray): The input image or frame.
@@ -149,8 +145,7 @@ class BaseSolution:
             self.boxes, self.clss, self.track_ids, self.confs = [], [], [], []
 
     def store_tracking_history(self, track_id, box, is_obb=False):
-        """
-        Stores the tracking history of an object.
+        """Stores the tracking history of an object.
 
         This method updates the tracking history for a given object by appending the center point of its
         bounding box to the track line. It maintains a maximum of 30 points in the tracking history.
@@ -179,8 +174,8 @@ class BaseSolution:
         )  # region or line
 
     def display_output(self, plot_im):
-        """
-        Display the results of the processing, which could involve showing frames, printing counts, or saving results.
+        """Display the results of the processing, which could involve showing frames, printing counts, or saving
+        results.
 
         This method is responsible for visualizing the output of the object detection and tracking process. It displays
         the processed frame with annotations, and allows for user interaction to close the display.
@@ -216,12 +211,11 @@ class BaseSolution:
 
 
 class SolutionAnnotator(Annotator):
-    """
-    A specialized annotator class for visualizing and analyzing computer vision tasks.
+    """A specialized annotator class for visualizing and analyzing computer vision tasks.
 
     This class extends the base Annotator class, providing additional methods for drawing regions, centroids, tracking
-    trails, and visual annotations for Ultralytics Solutions: https://docs.ultralytics.com/solutions/.
-    and parking management.
+    trails, and visual annotations for Ultralytics Solutions: https://docs.ultralytics.com/solutions/. and parking
+    management.
 
     Attributes:
         im (np.ndarray): The image being annotated.
@@ -255,8 +249,7 @@ class SolutionAnnotator(Annotator):
     """
 
     def __init__(self, im, line_width=None, font_size=None, font="Arial.ttf", pil=False, example="abc"):
-        """
-        Initializes the SolutionAnnotator class with an image for annotation.
+        """Initializes the SolutionAnnotator class with an image for annotation.
 
         Args:
             im (np.ndarray): The image to be annotated.
@@ -269,8 +262,7 @@ class SolutionAnnotator(Annotator):
         super().__init__(im, line_width, font_size, font, pil, example)
 
     def draw_region(self, reg_pts=None, color=(0, 255, 0), thickness=5):
-        """
-        Draw a region or line on the image.
+        """Draw a region or line on the image.
 
         Args:
             reg_pts (List[Tuple[int, int]]): Region points (for line 2 points, for region 4+ points).
@@ -284,8 +276,7 @@ class SolutionAnnotator(Annotator):
             cv2.circle(self.im, (point[0], point[1]), thickness * 2, color, -1)  # -1 fills the circle
 
     def queue_counts_display(self, label, points=None, region_color=(255, 255, 255), txt_color=(0, 0, 0)):
-        """
-        Displays queue counts on an image centered at the points with customizable font size and colors.
+        """Displays queue counts on an image centered at the points with customizable font size and colors.
 
         Args:
             label (str): Queue counts label.
@@ -324,8 +315,7 @@ class SolutionAnnotator(Annotator):
         )
 
     def display_analytics(self, im0, text, txt_color, bg_color, margin):
-        """
-        Display the overall statistics for parking lots, object counter etc.
+        """Display the overall statistics for parking lots, object counter etc.
 
         Args:
             im0 (np.ndarray): Inference image.
@@ -354,8 +344,7 @@ class SolutionAnnotator(Annotator):
 
     @staticmethod
     def estimate_pose_angle(a, b, c):
-        """
-        Calculate the angle between three points for workout monitoring.
+        """Calculate the angle between three points for workout monitoring.
 
         Args:
             a (List[float]): The coordinates of the first point.
@@ -370,8 +359,7 @@ class SolutionAnnotator(Annotator):
         return angle if angle <= 180.0 else (360 - angle)
 
     def draw_specific_kpts(self, keypoints, indices=None, radius=2, conf_thresh=0.25):
-        """
-        Draw specific keypoints for gym steps counting.
+        """Draw specific keypoints for gym steps counting.
 
         Args:
             keypoints (List[List[float]]): Keypoints data to be plotted, each in format [x, y, confidence].
@@ -382,7 +370,7 @@ class SolutionAnnotator(Annotator):
         Returns:
             (np.ndarray): Image with drawn keypoints.
 
-        Note:
+        Notes:
             Keypoint format: [x, y] or [x, y, confidence].
             Modifies self.im in-place.
         """
@@ -400,8 +388,7 @@ class SolutionAnnotator(Annotator):
         return self.im
 
     def plot_workout_information(self, display_text, position, color=(104, 31, 17), txt_color=(255, 255, 255)):
-        """
-        Draw workout text with a background on the image.
+        """Draw workout text with a background on the image.
 
         Args:
             display_text (str): The text to be displayed.
@@ -430,8 +417,7 @@ class SolutionAnnotator(Annotator):
     def plot_angle_and_count_and_stage(
         self, angle_text, count_text, stage_text, center_kpt, color=(104, 31, 17), txt_color=(255, 255, 255)
     ):
-        """
-        Plot the pose angle, count value, and step stage for workout monitoring.
+        """Plot the pose angle, count value, and step stage for workout monitoring.
 
         Args:
             angle_text (str): Angle value for workout monitoring.
@@ -458,8 +444,7 @@ class SolutionAnnotator(Annotator):
     def plot_distance_and_line(
         self, pixels_distance, centroids, line_color=(104, 31, 17), centroid_color=(255, 0, 255)
     ):
-        """
-        Plot the distance and line between two centroids on the frame.
+        """Plot the distance and line between two centroids on the frame.
 
         Args:
             pixels_distance (float): Pixels distance between two bbox centroids.
@@ -492,8 +477,7 @@ class SolutionAnnotator(Annotator):
         cv2.circle(self.im, centroids[1], 6, centroid_color, -1)
 
     def display_objects_labels(self, im0, text, txt_color, bg_color, x_center, y_center, margin):
-        """
-        Display the bounding boxes labels in parking management app.
+        """Display the bounding boxes labels in parking management app.
 
         Args:
             im0 (np.ndarray): Inference image.
@@ -532,8 +516,7 @@ class SolutionAnnotator(Annotator):
         )
 
     def sweep_annotator(self, line_x=0, line_y=0, label=None, color=(221, 0, 186), txt_color=(255, 255, 255)):
-        """
-        Draw a sweep annotation line and an optional label.
+        """Draw a sweep annotation line and an optional label.
 
         Args:
             line_x (int): The x-coordinate of the sweep line.
@@ -566,8 +549,7 @@ class SolutionAnnotator(Annotator):
             )
 
     def visioneye(self, box, center_point, color=(235, 219, 11), pin_color=(255, 0, 255)):
-        """
-        Perform pinpoint human-vision eye mapping and plotting.
+        """Perform pinpoint human-vision eye mapping and plotting.
 
         Args:
             box (List[float]): Bounding box coordinates in format [x1, y1, x2, y2].
@@ -581,8 +563,7 @@ class SolutionAnnotator(Annotator):
         cv2.line(self.im, center_point, center_bbox, color, self.tf)
 
     def circle_label(self, box, label="", color=(128, 128, 128), txt_color=(255, 255, 255), margin=2):
-        """
-        Draw a label with a background circle centered within a given bounding box.
+        """Draw a label with a background circle centered within a given bounding box.
 
         Args:
             box (Tuple[float, float, float, float]): The bounding box coordinates (x1, y1, x2, y2).
@@ -619,8 +600,7 @@ class SolutionAnnotator(Annotator):
         )
 
     def text_label(self, box, label="", color=(128, 128, 128), txt_color=(255, 255, 255), margin=5):
-        """
-        Draw a label with a background rectangle centered within a given bounding box.
+        """Draw a label with a background rectangle centered within a given bounding box.
 
         Args:
             box (Tuple[float, float, float, float]): The bounding box coordinates (x1, y1, x2, y2).
@@ -657,8 +637,7 @@ class SolutionAnnotator(Annotator):
 
 
 class SolutionResults:
-    """
-    A class to encapsulate the results of Ultralytics Solutions.
+    """A class to encapsulate the results of Ultralytics Solutions.
 
     This class is designed to store and manage various outputs generated by the solution pipeline, including counts,
     angles, and workout stages.
@@ -683,8 +662,7 @@ class SolutionResults:
     """
 
     def __init__(self, **kwargs):
-        """
-        Initialize a SolutionResults object with default or user-specified values.
+        """Initialize a SolutionResults object with default or user-specified values.
 
         Args:
             **kwargs (Any): Optional arguments to override default attribute values.
@@ -710,8 +688,7 @@ class SolutionResults:
         self.__dict__.update(kwargs)
 
     def __str__(self):
-        """
-        Return a formatted string representation of the SolutionResults object.
+        """Return a formatted string representation of the SolutionResults object.
 
         Returns:
             (str): A string representation listing non-null attributes.

@@ -1,9 +1,11 @@
 # Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
 
+from __future__ import annotations
+
 import argparse
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, List
+from typing import Any
 
 import cv2
 import numpy as np
@@ -38,8 +40,7 @@ counting_regions = [
 
 
 def mouse_callback(event: int, x: int, y: int, flags: int, param: Any) -> None:
-    """
-    Handle mouse events for region manipulation.
+    """Handle mouse events for region manipulation.
 
     Args:
         event (int): The mouse event type (e.g., cv2.EVENT_LBUTTONDOWN).
@@ -47,16 +48,15 @@ def mouse_callback(event: int, x: int, y: int, flags: int, param: Any) -> None:
         y (int): The y-coordinate of the mouse pointer.
         flags (int): Additional flags passed by OpenCV.
         param (Any): Additional parameters passed to the callback.
-
-    Global Variables:
+        Global Variables:
         current_region (dict): A dictionary representing the current selected region.
+
+    Examples:
+        >>> cv2.setMouseCallback(window_name, mouse_callback)
 
     Notes:
         This function is intended to be used as a callback for OpenCV mouse events.
         It allows for selecting and dragging counting regions within the video frame.
-
-    Examples:
-        >>> cv2.setMouseCallback(window_name, mouse_callback)
     """
     global current_region
 
@@ -81,25 +81,23 @@ def mouse_callback(event: int, x: int, y: int, flags: int, param: Any) -> None:
             current_region["offset_y"] = y
 
     # Mouse left button up event
-    elif event == cv2.EVENT_LBUTTONUP:
-        if current_region is not None and current_region["dragging"]:
-            current_region["dragging"] = False
+    elif event == cv2.EVENT_LBUTTONUP and current_region is not None and current_region["dragging"]:
+        current_region["dragging"] = False
 
 
 def run(
     weights: str = "yolo11n.pt",
-    source: str = None,
+    source: str | None = None,
     device: str = "cpu",
     view_img: bool = False,
     save_img: bool = False,
     exist_ok: bool = False,
-    classes: List[int] = None,
+    classes: list[int] | None = None,
     line_thickness: int = 2,
     track_thickness: int = 2,
     region_thickness: int = 2,
 ) -> None:
-    """
-    Run region counting on a video using Ultralytics YOLO and ByteTrack.
+    """Run region counting on a video using Ultralytics YOLO and ByteTrack.
 
     Args:
         weights (str): Model weights path.

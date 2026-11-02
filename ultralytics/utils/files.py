@@ -11,11 +11,10 @@ from pathlib import Path
 
 
 class WorkingDirectory(contextlib.ContextDecorator):
-    """
-    A context manager and decorator for temporarily changing the working directory.
+    """A context manager and decorator for temporarily changing the working directory.
 
-    This class allows for the temporary change of the working directory using a context manager or decorator.
-    It ensures that the original working directory is restored after the context or decorated function completes.
+    This class allows for the temporary change of the working directory using a context manager or decorator. It ensures
+    that the original working directory is restored after the context or decorated function completes.
 
     Attributes:
         dir (Path | str): The new directory to switch to.
@@ -47,15 +46,14 @@ class WorkingDirectory(contextlib.ContextDecorator):
         """Changes the current working directory to the specified directory upon entering the context."""
         os.chdir(self.dir)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):  # noqa
+    def __exit__(self, exc_type, exc_val, exc_tb):
         """Restores the original working directory when exiting the context."""
         os.chdir(self.cwd)
 
 
 @contextmanager
 def spaces_in_path(path):
-    """
-    Context manager to handle paths with spaces in their names.
+    """Context manager to handle paths with spaces in their names.
 
     If a path contains spaces, it replaces them with underscores, copies the file/directory to the new path, executes
     the context code block, then copies the file/directory back to its original location.
@@ -64,7 +62,8 @@ def spaces_in_path(path):
         path (str | Path): The original path that may contain spaces.
 
     Yields:
-        (Path | str): Temporary path with spaces replaced by underscores if spaces were present, otherwise the original path.
+        (Path | str): Temporary path with spaces replaced by underscores if spaces were present, otherwise the original
+            path.
 
     Examples:
         >>> with spaces_in_path('/path/with spaces') as new_path:
@@ -105,12 +104,11 @@ def spaces_in_path(path):
 
 
 def increment_path(path, exist_ok=False, sep="", mkdir=False):
-    """
-    Increment a file or directory path, i.e., runs/exp --> runs/exp{sep}2, runs/exp{sep}3, ... etc.
+    """Increment a file or directory path, i.e., runs/exp --> runs/exp{sep}2, runs/exp{sep}3, ... etc.
 
-    If the path exists and `exist_ok` is not True, the path will be incremented by appending a number and `sep` to
-    the end of the path. If the path is a file, the file extension will be preserved. If the path is a directory, the
-    number will be appended directly to the end of the path.
+    If the path exists and `exist_ok` is not True, the path will be incremented by appending a number and `sep` to the
+    end of the path. If the path is a file, the file extension will be preserved. If the path is a directory, the number
+    will be appended directly to the end of the path.
 
     Args:
         path (str | Path): Path to increment.
@@ -183,8 +181,7 @@ def get_latest_run(search_dir="."):
 
 
 def update_models(model_names=("yolo11n.pt",), source_dir=Path("."), update_names=False):
-    """
-    Update and re-save specified YOLO models in an 'updated_models' subdirectory.
+    """Update and re-save specified YOLO models in an 'updated_models' subdirectory.
 
     Args:
         model_names (Tuple[str, ...]): Model filenames to update.

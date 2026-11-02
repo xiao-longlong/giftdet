@@ -9,11 +9,10 @@ from ultralytics.solutions.solutions import BaseSolution, SolutionResults  # Imp
 
 
 class Analytics(BaseSolution):
-    """
-    A class for creating and updating various types of charts for visual analytics.
+    """A class for creating and updating various types of charts for visual analytics.
 
-    This class extends BaseSolution to provide functionality for generating line, bar, pie, and area charts
-    based on object detection and tracking data.
+    This class extends BaseSolution to provide functionality for generating line, bar, pie, and area charts based on
+    object detection and tracking data.
 
     Attributes:
         type (str): The type of analytics chart to generate ('line', 'bar', 'pie', or 'area').
@@ -87,8 +86,7 @@ class Analytics(BaseSolution):
                 self.ax.axis("equal")
 
     def process(self, im0, frame_number):
-        """
-        Process image data and run object tracking to update analytics charts.
+        """Process image data and run object tracking to update analytics charts.
 
         Args:
             im0 (np.ndarray): Input image for processing.
@@ -127,8 +125,7 @@ class Analytics(BaseSolution):
         return SolutionResults(plot_im=plot_im, total_tracks=len(self.track_ids), classwise_count=self.clswise_count)
 
     def update_graph(self, frame_number, count_dict=None, plot="line"):
-        """
-        Update the graph with new data for single or multiple classes.
+        """Update the graph with new data for single or multiple classes.
 
         Args:
             frame_number (int): The current frame number.
@@ -165,20 +162,20 @@ class Analytics(BaseSolution):
                 color_cycle = cycle(["#DD00BA", "#042AFF", "#FF4447", "#7D24FF", "#BD00FF"])
                 # Multiple lines or area update
                 x_data = self.ax.lines[0].get_xdata() if self.ax.lines else np.array([])
-                y_data_dict = {key: np.array([]) for key in count_dict.keys()}
+                y_data_dict = {key: np.array([]) for key in count_dict}
                 if self.ax.lines:
                     for line, key in zip(self.ax.lines, count_dict.keys()):
                         y_data_dict[key] = line.get_ydata()
 
                 x_data = np.append(x_data, float(frame_number))
                 max_length = len(x_data)
-                for key in count_dict.keys():
+                for key in count_dict:
                     y_data_dict[key] = np.append(y_data_dict[key], float(count_dict[key]))
                     if len(y_data_dict[key]) < max_length:
                         y_data_dict[key] = np.pad(y_data_dict[key], (0, max_length - len(y_data_dict[key])))
                 if len(x_data) > self.max_points:
                     x_data = x_data[1:]
-                    for key in count_dict.keys():
+                    for key in count_dict:
                         y_data_dict[key] = y_data_dict[key][1:]
 
                 self.ax.clear()

@@ -182,7 +182,7 @@ video_path = "path/to/video.mp4"
 cap = cv2.VideoCapture(video_path)
 
 # Store the track history
-track_history = defaultdict(lambda: [])
+track_history = defaultdict(list)
 
 # Loop through the video frames
 while cap.isOpened():
@@ -254,8 +254,7 @@ from ultralytics import YOLO
 
 
 def run_tracker_in_thread(filename, model, file_index):
-    """
-    Runs tracking on a video file using the specified model.
+    """Runs tracking on a video file using the specified model.
 
     Args:
         filename (str): The path to the video file.

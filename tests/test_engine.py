@@ -11,7 +11,7 @@ from ultralytics.models.yolo import classify, detect, segment
 from ultralytics.utils import ASSETS, DEFAULT_CFG, WEIGHTS_DIR
 
 
-def test_func(*args):  # noqa
+def test_func(*args):
     """Test function callback for evaluating YOLO model performance metrics."""
     print("callback test passed")
 
@@ -61,7 +61,7 @@ def test_detect():
         print(f"Expected exception caught: {e}")
         return
 
-    Exception("Resume test failed!")
+    raise Exception("Resume test failed!")
 
 
 def test_segment():
@@ -100,7 +100,7 @@ def test_segment():
         print(f"Expected exception caught: {e}")
         return
 
-    Exception("Resume test failed!")
+    raise Exception("Resume test failed!")
 
 
 def test_classify():

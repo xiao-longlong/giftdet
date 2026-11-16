@@ -26,8 +26,7 @@ from ultralytics.utils.checks import check_file
 
 
 class InfiniteDataLoader(dataloader.DataLoader):
-    """
-    Dataloader that reuses workers.
+    """Dataloader that reuses workers.
 
     This dataloader extends the PyTorch DataLoader to provide infinite recycling of workers, which improves efficiency
     for training loops that need to iterate through the dataset multiple times.
@@ -76,11 +75,10 @@ class InfiniteDataLoader(dataloader.DataLoader):
 
 
 class _RepeatSampler:
-    """
-    Sampler that repeats forever.
+    """Sampler that repeats forever.
 
-    This sampler wraps another sampler and yields its contents indefinitely, allowing for infinite iteration
-    over a dataset.
+    This sampler wraps another sampler and yields its contents indefinitely, allowing for infinite iteration over a
+    dataset.
 
     Attributes:
         sampler (Dataset.sampler): The sampler to repeat.
@@ -96,7 +94,7 @@ class _RepeatSampler:
             yield from iter(self.sampler)
 
 
-def seed_worker(worker_id):  # noqa
+def seed_worker(worker_id):
     """Set dataloader worker seed for reproducibility across worker processes."""
     worker_seed = torch.initial_seed() % 2**32
     np.random.seed(worker_seed)
@@ -147,8 +145,7 @@ def build_grounding(cfg, img_path, json_file, batch, mode="train", rect=False, s
 
 
 def build_dataloader(dataset, batch, workers, shuffle=True, rank=-1):
-    """
-    Create and return an InfiniteDataLoader or DataLoader for training or validation.
+    """Create and return an InfiniteDataLoader or DataLoader for training or validation.
 
     Args:
         dataset (Dataset): Dataset to load data from.
@@ -180,8 +177,7 @@ def build_dataloader(dataset, batch, workers, shuffle=True, rank=-1):
 
 
 def check_source(source):
-    """
-    Check the type of input source and return corresponding flag values.
+    """Check the type of input source and return corresponding flag values.
 
     Args:
         source (str | int | Path | List | Tuple | np.ndarray | PIL.Image | torch.Tensor): The input source to check.
@@ -223,8 +219,7 @@ def check_source(source):
 
 
 def load_inference_source(source=None, batch=1, vid_stride=1, buffer=False, channels=3):
-    """
-    Load an inference source for object detection and apply necessary transformations.
+    """Load an inference source for object detection and apply necessary transformations.
 
     Args:
         source (str | Path | torch.Tensor | PIL.Image | np.ndarray, optional): The input source for inference.
@@ -254,6 +249,6 @@ def load_inference_source(source=None, batch=1, vid_stride=1, buffer=False, chan
         dataset = LoadImagesAndVideos(source, batch=batch, vid_stride=vid_stride, channels=channels)
 
     # Attach source types to the dataset
-    setattr(dataset, "source_type", source_type)
+    dataset.source_type = source_type
 
     return dataset
